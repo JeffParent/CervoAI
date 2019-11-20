@@ -2,12 +2,11 @@ import numpy as np
 
 
 def load_data():
-    X = list()
+    X = np.load("data/binary/binary_%0.npy")
     for i in range(8):
-        X.append(np.load("data/binary/binary_%s.npy"%i))
-    X = np.array(X)
+        X = np.concatenate(X, np.load("data/binary/binary_%s".format(i)))
     Y = np.load("data/binary/binary_y.npy")
-    return X,Y
+    return X, Y
 
 
 X, Y = load_data()
