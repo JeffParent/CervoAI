@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 def load_images():
-    csv = pd.read_csv("Data/raw/AI_FS_QC_img/data_AI_QC.csv")
+    csv = pd.read_csv("data/raw/AI_FS_QC_img/data_AI_QC.csv")
     ID = csv["id"].tolist()
     y = csv["fail"].to_numpy()
 
@@ -22,7 +22,7 @@ def load_images():
         print("Progression: ", i*100/n_brains, " %")
         #pour chaque cerveau, crée une liste qui contient toutes les coupes supperposées
         observation_list = []
-        path = "Data/raw/AI_FS_QC_img/"
+        path = "data/raw/AI_FS_QC_img/"
         path += str(ID[i])+"/Coronal/"
         #cette partie extrait les images labels et t1 pour chaque cerveau. Elle fait ensuite deux listes (une pour
         #les coupes label et une pour t1). Elle met ces deux listes dans le dictionnaire image_dict. 
