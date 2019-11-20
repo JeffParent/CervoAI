@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 def load_images():
-    csv = pd.read_csv('data_AI_QC.csv')
+    csv = pd.read_csv("Data/raw/AI_FS_QC_img/data_AI_QC.csv")
     ID = csv["id"].tolist()
     y = csv["fail"].to_numpy()
 
