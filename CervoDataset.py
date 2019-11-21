@@ -42,8 +42,8 @@ class CervoDataset(Dataset):
                 images.append(image)
         print(len(images))
         X = torch.tensor(images)
-        X.permute(0, 3, 1, 2)
-        X.flatten(end_dim=1)
+        X = X.permute(0, 3, 1, 2)
+        X = X.flatten(end_dim=1)
         print(X.shape)
         y = self.labels.iloc[idx, 1]
 
