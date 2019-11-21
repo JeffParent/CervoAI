@@ -59,8 +59,9 @@ def load_images():
                 pass
     return brain_list,y
 
+
 if __name__ == '__main__':
-    X,y = load_images()
+    X, y = load_images()
     n_brains_per_save = 1000 #save par batch pour ne pas exploser la mémoire Ram. 
     for i in range(int(len(X)/n_brains_per_save)):
         np.save("data/binary/binary_%s"%(i), np.array(X[i*n_brains_per_save:i*n_brains_per_save+n_brains_per_save]))
