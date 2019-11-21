@@ -33,11 +33,12 @@ class CervoDataset(Dataset):
         for file in os.listdir(img_folder_path):
             filename = os.fsdecode(file)
             if filename[-3:] == "png":
+                print(filename)
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", filename)
                 image = io.imread(img_name)
                 images.append(image)
         X = np.array(images)
-        y = self.labels.iloc[idx, 1:]
+        y = self.labels.iloc[idx, 1]
 
         return X, y
 
