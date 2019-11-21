@@ -41,7 +41,7 @@ class CervoDataset(Dataset):
                 image = io.imread(img_name)
                 images.append(image)
         print(len(images))
-        X = np.array(images)
+        X = np.ndarray(images)
         X.swapaxes(2, 3)
         X.swapaxes(1, 2)
 
