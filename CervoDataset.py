@@ -56,10 +56,10 @@ if __name__ == '__main__':
             c0 += 1
         else:
             c1 += 1
-        print("n c1 = {}".format(c0))
+        print("n c0 = {}".format(c0))
         print("n c1 = {}".format(c1))
 
-    print("n c1 = {}".format(c0))
+    print("n c0 = {}".format(c0))
     print("n c1 = {}".format(c1))
 
 
