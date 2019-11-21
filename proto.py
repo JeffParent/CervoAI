@@ -35,6 +35,8 @@ num_data = len(cervo_dataset)
 indices = list(range(num_data))
 np.random.shuffle(indices)
 
+
+# splitting into train, valid and test datasets
 test_split = math.floor(train_split_percent * num_data)
 
 test_indices = indices[test_split:]
@@ -47,6 +49,11 @@ valid_dataset = Subset(cervo_dataset, valid_indices)
 
 train_indices = indices[:valid_split]
 train_dataset = Subset(cervo_dataset, train_indices)
+
+# setting up the weighedSampler
+class_sample_count = []
+
+# initializing the loaders
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size)
