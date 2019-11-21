@@ -44,20 +44,18 @@ class CervoDataset(Dataset):
         X = torch.tensor(images)
         X.permute(0, 3, 1, 2)
         X.flatten(end_dim=1)
-
+        print(X.shape)
         y = self.labels.iloc[idx, 1]
 
         if self.transform is not None:
-            X = torch.tensor(X)
-            if torch.is_tensor(X):
-                torch.flatten(X, end_dim=1)
+            X = self.transform(X)
 
         return X, y
 
 
 if __name__ == '__main__':
 
-    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transform= transforms.ToTensor())
+    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
     fig = plt.figure()
     print(len(cervo_dataset))
