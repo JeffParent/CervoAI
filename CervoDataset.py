@@ -35,7 +35,7 @@ class CervoDataset(Dataset):
             filename = os.fsdecode(file)
             if filename[-3:] == "png":
                 print(filename)
-                img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", filename)
+                img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", filename)
                 image = io.imread(img_name)
                 images.append(image)
         print(len(images))
