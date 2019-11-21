@@ -53,7 +53,7 @@ train_dataset = Subset(cervo_dataset, train_indices)
 # setting up the weighedSampler
 class_sample_count = [6616, 565]
 weights = 1. / torch.tensor(class_sample_count, dtype=torch.float)
-samples_weights = weights[train_dataset][1]
+samples_weights = weights[train_dataset[1]]
 sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, batch_size)
 
 # initializing the loaders
