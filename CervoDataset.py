@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class CervoDataset(Dataset):
 
 
-    def __init__(self, csv_file, root_dir):
+    def __init__(self, csv_file, root_dir, transform = None):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -21,6 +21,7 @@ class CervoDataset(Dataset):
         """
         self.labels = pd.read_csv(csv_file)
         self.root_dir = root_dir
+        self.transform = transform
 
     def __len__(self):
         return len(self.labels)
@@ -40,7 +41,15 @@ class CervoDataset(Dataset):
                 images.append(image)
         print(len(images))
         X = np.array(images)
+        X.swapaxes(2, 3)
+        X.swapaxes(1, 2)
+
         y = self.labels.iloc[idx, 1]
+
+        if self.transform is not None:
+            X = self.transform(X)
+            if torch.is_tensor(X):
+                torch.flatten(X, end_dim=1)
 
         return X, y
 
