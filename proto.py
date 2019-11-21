@@ -25,7 +25,7 @@ train_split_percent = 0.8
 num_classes = 2
 
 # Training hyperparameters
-batch_size = 32
+batch_size = 16
 learning_rate = 0.1
 num_epochs = 5
 
