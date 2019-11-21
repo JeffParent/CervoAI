@@ -29,6 +29,7 @@ class CervoDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         img_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal")
+        print(img_folder_path)
         images = list()
         for file in os.listdir(img_folder_path):
             filename = os.fsdecode(file)
