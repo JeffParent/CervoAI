@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from torchvision import transforms
 
 
 class CervoDataset(Dataset):
@@ -56,7 +57,7 @@ class CervoDataset(Dataset):
 
 if __name__ == '__main__':
 
-    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
+    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transform= transforms.ToTensor())
 
     fig = plt.figure()
     print(len(cervo_dataset))
