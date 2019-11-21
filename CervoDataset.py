@@ -41,14 +41,14 @@ class CervoDataset(Dataset):
                 image = io.imread(img_name)
                 images.append(image)
         print(len(images))
-        X = np.ndarray(images)
-        X.swapaxes(2, 3)
-        X.swapaxes(1, 2)
+        X = torch.tensor(images)
+        X.permute(0, 3, 1, 2)
+        X.flatten(end_dim=1)
 
         y = self.labels.iloc[idx, 1]
 
         if self.transform is not None:
-            X = self.transform(X)
+            X = torch.tensor(X)
             if torch.is_tensor(X):
                 torch.flatten(X, end_dim=1)
 
