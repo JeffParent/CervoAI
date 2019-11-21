@@ -52,8 +52,8 @@ train_dataset = Subset(cervo_dataset, train_indices)
 
 # setting up the weighedSampler
 class_sample_count = [6616, 565]
-w0 = class_sample_count[0] / sum(class_sample_count)
-w1 = class_sample_count[1] / sum(class_sample_count)
+w1 = class_sample_count[0] / sum(class_sample_count)
+w0 = 1 - w1
 sample_weights = list()
 for i in range(len(train_dataset)):
     if train_dataset[i][1] == 0:
