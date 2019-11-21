@@ -6,8 +6,6 @@ from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('Agg')
 
 
 class CervoDataset(Dataset):
@@ -58,13 +56,6 @@ if __name__ == '__main__':
         sample = cervo_dataset[i]
 
         print(i, sample[0].shape, sample[1])
-
-        ax = plt.subplot(1, 4, i + 1)
-        plt.tight_layout()
-        ax.set_title('Sample #{}'.format(i))
-        ax.axis('off')
-        plt.imshow(sample[0][1])
-        plt.pause(0.001)
 
         if i == 3:
             plt.show()
