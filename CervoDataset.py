@@ -42,8 +42,7 @@ class CervoDataset(Dataset):
                 if self.transform is not None:
                     self.transform(image)
                 images.append(image)
-        print(len(images))
-        X = torch.tensor(images)
+        X = torch.stack(images)
         X = X.permute(0, 3, 1, 2)
         X = X.flatten(end_dim=1)
         print(X.shape)
