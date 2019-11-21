@@ -62,13 +62,13 @@ def create_convolutional_network():
     return nn.Sequential(
         nn.Conv2d(in_channels=60, out_channels=480, kernel_size=5, padding=2),
         nn.ReLU(),
-        nn.MaxPool2d(2),
+        nn.MaxPool2d(4),
         nn.Conv2d(in_channels=480, out_channels=960, kernel_size=5, padding=2),
         nn.ReLU(),
-        nn.MaxPool2d(2),
+        nn.MaxPool2d(4),
         nn.Dropout(0.25),
         Lambda(lambda x: x.flatten(1)), # Flatten layer is in Poutyne.
-        nn.Linear(960*64*64, 128),
+        nn.Linear(960*16*16, 128),
         nn.ReLU(),
         nn.Dropout(0.5),
         nn.Linear(128, num_classes)
