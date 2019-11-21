@@ -39,6 +39,8 @@ class CervoDataset(Dataset):
                 print(filename)
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", filename)
                 image = io.imread(img_name)
+                if self.transform is not None:
+                    self.transform(image)
                 images.append(image)
         print(len(images))
         X = torch.tensor(images)
@@ -47,15 +49,12 @@ class CervoDataset(Dataset):
         print(X.shape)
         y = self.labels.iloc[idx, 1]
 
-        if self.transform is not None:
-            X = self.transform(X)
-
         return X, y
 
 
 if __name__ == '__main__':
 
-    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
+    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transform=transforms.ToTensor())
 
     fig = plt.figure()
     print(len(cervo_dataset))
