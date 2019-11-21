@@ -60,15 +60,15 @@ def create_convolutional_network():
     This function returns the convolutional network layed out above.
     """
     return nn.Sequential(
-        nn.Conv2d(in_channels=60, out_channels=180, kernel_size=3, padding=1),
+        nn.Conv2d(in_channels=60, out_channels=480, kernel_size=5, padding=2),
         nn.ReLU(),
         nn.MaxPool2d(2),
-        nn.Conv2d(in_channels=180, out_channels=360, kernel_size=3, padding=1),
+        nn.Conv2d(in_channels=480, out_channels=960, kernel_size=5, padding=2),
         nn.ReLU(),
         nn.MaxPool2d(2),
         nn.Dropout(0.25),
         Lambda(lambda x: x.flatten(1)), # Flatten layer is in Poutyne.
-        nn.Linear(32*7*7, 128),
+        nn.Linear(960*64*64, 128),
         nn.ReLU(),
         nn.Dropout(0.5),
         nn.Linear(128, num_classes)
