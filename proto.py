@@ -57,7 +57,7 @@ sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, batch_size)
 
 # initializing the loaders
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, sampler=sampler)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=sampler)
 valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
 
