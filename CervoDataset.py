@@ -49,9 +49,16 @@ if __name__ == '__main__':
     cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
     fig = plt.figure()
-    y= cervo_dataset[:][1]
-    print(np.sum(y))
-    print(len(y))
+    c0 = 0
+    c1 = 0
+    for i in range(len(cervo_dataset)):
+        if cervo_dataset[i][1] == 0:
+            c0 += 1
+        else:
+            c1 += 1
+
+    print("n c1 = {}".format(c0))
+    print("n c1 = {}".format(c1))
 
 
     for i in range(len(cervo_dataset)):
