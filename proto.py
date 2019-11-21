@@ -54,13 +54,12 @@ train_dataset = Subset(cervo_dataset, train_indices)
 class_sample_count = [6616, 565]
 w0 = class_sample_count[0] / sum(class_sample_count)
 w1 = class_sample_count[1] / sum(class_sample_count)
-weights = [class_sample_count]
 sample_weights = list()
 for i in range(len(train_dataset)):
     if train_dataset[i][1] == 0:
-        sample_weights.append(weights[0])
+        sample_weights.append(w0)
     else:
-        sample_weights.append(weights[1])
+        sample_weights.append(w1)
 sampler = torch.utils.data.sampler.WeightedRandomSampler(sample_weights, batch_size)
 
 # initializing the loaders
