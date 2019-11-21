@@ -39,9 +39,7 @@ class CervoDataset(Dataset):
                 print(filename)
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", filename)
                 image = io.imread(img_name)
-                if self.transform is not None:
-                    self.transform(image)
-                images.append(image)
+                images.append(transforms.ToTensor(image))
         X = torch.stack(images)
         X = X.permute(0, 3, 1, 2)
         X = X.flatten(end_dim=1)
@@ -53,7 +51,7 @@ class CervoDataset(Dataset):
 
 if __name__ == '__main__':
 
-    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transform=transforms.ToTensor())
+    cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
     fig = plt.figure()
     print(len(cervo_dataset))
