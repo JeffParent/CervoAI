@@ -55,13 +55,13 @@ if __name__ == '__main__':
     for i in range(len(cervo_dataset)):
         sample = cervo_dataset[i]
 
-        print(i, sample[0].shape, sample[1].shape)
+        print(i, sample[0].shape, sample[1])
 
         ax = plt.subplot(1, 4, i + 1)
         plt.tight_layout()
         ax.set_title('Sample #{}'.format(i))
         ax.axis('off')
-        plt.imshow(sample[0])
+        plt.imshow(sample[0][1])
         plt.pause(0.001)
 
         if i == 3:
