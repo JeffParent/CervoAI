@@ -31,18 +31,15 @@ class CervoDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         img_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", "")
-        print(img_folder_path)
         images = list()
         for file in os.listdir(img_folder_path):
             filename = os.fsdecode(file)
             if filename[-3:] == "png":
-                print(filename)
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", filename)
                 image = io.imread(img_name)
                 images.append(transforms.ToTensor()(image))
         X = torch.stack(images)
         X = X.flatten(end_dim=1)
-        print(X.shape)
         y = self.labels.iloc[idx, 1]
 
         return X, y

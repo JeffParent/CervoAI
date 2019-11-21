@@ -54,15 +54,16 @@ test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
 
 loaders = train_loader, valid_loader, test_loader
 
+
 def create_convolutional_network():
     """
     This function returns the convolutional network layed out above.
     """
     return nn.Sequential(
-        nn.Conv2d(in_channels=1, out_channels=16, kernel_size=3, padding=1),
+        nn.Conv2d(in_channels=60, out_channels=180, kernel_size=3, padding=1),
         nn.ReLU(),
         nn.MaxPool2d(2),
-        nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding=1),
+        nn.Conv2d(in_channels=180, out_channels=360, kernel_size=3, padding=1),
         nn.ReLU(),
         nn.MaxPool2d(2),
         nn.Dropout(0.25),
@@ -70,4 +71,37 @@ def create_convolutional_network():
         nn.Linear(32*7*7, 128),
         nn.ReLU(),
         nn.Dropout(0.5),
-        nn.Lin
+        nn.Linear(128, num_classes)
+    )
+
+
+def poutyne_train(pytorch_module):
+    """
+    This function creates a Poutyne Model, sends the Model on the specified device,
+    and uses the `fit_generator` method to train the neural network. At the end,
+    the `evaluate_generator` is used on the test set.
+
+    Args:
+        pytorch_module (torch.nn.Module): The neural network to train.
+    """
+    print(pytorch_module)
+
+    optimizer = optim.SGD(pytorch_module.parameters(), lr=learning_rate)
+    loss_function = nn.CrossEntropyLoss()
+
+    # Poutyne Model
+    model = Model(pytorch_module, optimizer, loss_function, metrics=['accuracy'])
+
+    # Send model on GPU
+    model.to(device)
+
+    # Train
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs)
+
+    # Test
+    test_loss, test_acc = model.evaluate_generator(test_loader)
+    print('Test:\n\tLoss: {}\n\tAccuracy: {}'.format(test_loss, test_acc))
+
+
+conv_net = create_convolutional_network()
+poutyne_train(conv_net)
