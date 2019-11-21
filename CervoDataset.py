@@ -28,12 +28,12 @@ class CervoDataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        img_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "coronal")
+        img_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal")
         images = list()
         for file in os.listdir(img_folder_path):
             filename = os.fsdecode(file)
             if filename[-3:] == "png":
-                img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "coronal", filename)
+                img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", filename)
                 image = io.imread(img_name)
                 images.append(image)
         X = np.array(images)
