@@ -29,7 +29,7 @@ batch_size = 32
 learning_rate = 0.1
 num_epochs = 5
 
-cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transform = transforms.ToTensor())
+cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
 num_data = len(cervo_dataset)
 indices = list(range(num_data))

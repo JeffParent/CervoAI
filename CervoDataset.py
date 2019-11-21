@@ -11,7 +11,6 @@ from torchvision import transforms
 
 class CervoDataset(Dataset):
 
-
     def __init__(self, csv_file, root_dir, transform = None):
         """
         Args:
