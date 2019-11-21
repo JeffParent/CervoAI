@@ -37,6 +37,7 @@ class CervoDataset(Dataset):
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", filename)
                 image = io.imread(img_name)
                 images.append(image)
+        print(len(images))
         X = np.array(images)
         y = self.labels.iloc[idx, 1]
 
