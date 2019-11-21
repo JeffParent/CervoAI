@@ -28,7 +28,7 @@ class CervoDataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        img_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "")
+        img_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", "")
         print(img_folder_path)
         images = list()
         for file in os.listdir(img_folder_path):
