@@ -49,7 +49,7 @@ if __name__ == '__main__':
     cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
     fig = plt.figure()
-    y= CervoDataset[:][1]
+    y= cervo_dataset[:][1]
     print(np.sum(y))
     print(len(y))
 
