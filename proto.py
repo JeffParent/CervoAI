@@ -15,25 +15,38 @@ from poutyne.layers import Lambda
 
 from CervoDataset import CervoDataset
 
+
 def create_balanced_sampler(dataset):
-    def make_weights_for_balanced_classes(images, n_classes):
+    def make_weights_for_balanced_classes(a_dataset, n_classes):
         count = [0] * n_classes
-        for item in images:
-            count[item[1]] += 1
+        for i in range(len(a_dataset)):
+            count[a_dataset[i][1]] += 1
         weight_per_class = [0.] * n_classes
         N = float(sum(count))
         for i in range(n_classes):
             weight_per_class[i] = N/float(count[i])
-        weight = [0] * len(images)
-        for idx, val in enumerate(images):
-            weight[idx] = weight_per_class[val[1]]
+        weight = [0] * len(a_dataset)
+        for idx in range(len(a_dataset)):
+            weight[idx] = weight_per_class[a_dataset[idx][1]]
         return weight
 
-    n_classes = np.unique(dataset.targets)
-    weights = make_weights_for_balanced_classes(dataset.data, len(n_classes))
+    weights = make_weights_for_balanced_classes(dataset, 2)
     weights = torch.DoubleTensor(weights)
     sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
     return sampler
+
+# setting up the weighedSampler
+# class_sample_count = [6616, 565]
+# w1 = class_sample_count[0] / sum(class_sample_count)
+# w0 = 1 - w1
+# sample_weights = list()
+# for i in range(len(train_dataset)):
+#     if train_dataset[i][1] == 0:
+#         sample_weights.append(w0)
+#     else:
+#         sample_weights.append(w1)
+# sampler = torch.utils.data.sampler.WeightedRandomSampler(sample_weights, batch_size)
+
 
 cuda_device = 0
 device = torch.device("cuda:%d" % cuda_device if torch.cuda.is_available() else "cpu")
