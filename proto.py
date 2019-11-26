@@ -15,6 +15,26 @@ from poutyne.layers import Lambda
 
 from CervoDataset import CervoDataset
 
+def create_balanced_sampler(dataset):
+    def make_weights_for_balanced_classes(images, n_classes):
+        count = [0] * n_classes
+        for item in images:
+            count[item[1]] += 1
+        weight_per_class = [0.] * n_classes
+        N = float(sum(count))
+        for i in range(n_classes):
+            weight_per_class[i] = N/float(count[i])
+        weight = [0] * len(images)
+        for idx, val in enumerate(images):
+            weight[idx] = weight_per_class[val[1]]
+        return weight
+
+    n_classes = np.unique(dataset.targets)
+    weights = make_weights_for_balanced_classes(dataset.data, len(n_classes))
+    weights = torch.DoubleTensor(weights)
+    sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+    return sampler
+
 cuda_device = 0
 device = torch.device("cuda:%d" % cuda_device if torch.cuda.is_available() else "cpu")
 
@@ -50,23 +70,13 @@ valid_dataset = Subset(cervo_dataset, valid_indices)
 train_indices = indices[:valid_split]
 train_dataset = Subset(cervo_dataset, train_indices)
 
-# setting up the weighedSampler
-# class_sample_count = [6616, 565]
-# w1 = class_sample_count[0] / sum(class_sample_count)
-# w0 = 1 - w1
-# sample_weights = list()
-# for i in range(len(train_dataset)):
-#     if train_dataset[i][1] == 0:
-#         sample_weights.append(w0)
-#     else:
-#         sample_weights.append(w1)
-# sampler = torch.utils.data.sampler.WeightedRandomSampler(sample_weights, batch_size)
+balanced_train_sampler = create_balanced_sampler(train_dataset, num_classes=2)
+balanced_val_sampler = create_balanced_sampler(valid_dataset, num_classes=2)
+balanced_test_sampler = create_balanced_sampler(test_dataset, num_classes=2)
 
-# initializing the loaders
-
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=balanced_train_sampler)
+valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, sampler=balanced_val_sampler)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, sampler=balanced_test_sampler)
 
 loaders = train_loader, valid_loader, test_loader
 
