@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data.dataset import Subset
+from torchvision.models import resnet18
+
 from utils import create_balanced_sampler
 
 from torchvision import transforms, utils
@@ -64,24 +66,41 @@ test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, s
 loaders = train_loader, valid_loader, test_loader
 
 
-def create_convolutional_network():
-    """
-    This function returns the convolutional network layed out above.
-    """
-    return nn.Sequential(
-        nn.Conv2d(in_channels=60, out_channels=480, kernel_size=5, padding=2),
-        nn.ReLU(),
-        nn.MaxPool2d(4),
-        nn.Conv2d(in_channels=480, out_channels=960, kernel_size=5, padding=2),
-        nn.ReLU(),
-        nn.MaxPool2d(4),
-        nn.Dropout(0.25),
-        Lambda(lambda x: x.flatten(1)), # Flatten layer is in Poutyne.
-        nn.Linear(960*16*16, 128),
-        nn.ReLU(),
-        nn.Dropout(0.5),
-        nn.Linear(128, num_classes)
-    )
+class CervoResNet(nn.Module):
+
+    def __init__(self, pretrained=False):
+        super().__init__()
+
+        # Crée le réseau de neurone pré-entraîné
+        self.model = resnet18(pretrained=pretrained)
+
+        # Récupère le nombre de neurones avant
+        # la couche de classification
+        dim_before_fc = self.model.fc.in_features
+        channels_after_conv_1 = self.model.conv1.out_channels
+
+        # TODO Q2A
+        # Changer la dernière fully-connected layer
+        # pour avoir le bon nombre de neurones de
+        # sortie
+        self.model.conv1 = nn.Conv2d(in_channels=60, out_channels=channels_after_conv_1, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+        self.model.fc = nn.Linear(dim_before_fc, 1)
+
+        if pretrained:
+            # TODO Q2A
+            # Geler les paramètres qui ne font pas partie
+            # de la dernière couche fc
+            # Conseil: utiliser l'itérateur named_parameters()
+            # et la variable requires_grad
+            for name, param in self.model.named_parameters():
+                if "fc" or "conv1" not in name:
+                    param.requires_grad = False
+
+    def forward(self, x):
+        # TODO Q2A
+        # Appeler la fonction forward du réseau
+        # pré-entraîné (resnet18) de LegoNet
+        return self.model.forward(x)
 
 
 def poutyne_train(pytorch_module):
@@ -96,7 +115,7 @@ def poutyne_train(pytorch_module):
     print(pytorch_module)
 
     optimizer = optim.SGD(pytorch_module.parameters(), lr=learning_rate)
-    loss_function = nn.CrossEntropyLoss()
+    loss_function = nn.BCELoss()
 
     # Poutyne Model
     model = Model(pytorch_module, optimizer, loss_function, metrics=['accuracy'])
@@ -112,5 +131,5 @@ def poutyne_train(pytorch_module):
     print('Test:\n\tLoss: {}\n\tAccuracy: {}'.format(test_loss, test_acc))
 
 
-conv_net = create_convolutional_network()
+conv_net = CervoResNet()
 poutyne_train(conv_net)
