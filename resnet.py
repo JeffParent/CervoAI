@@ -8,7 +8,7 @@ import torch.optim as optim
 from torch.utils.data.dataset import Subset
 from torchvision.models import resnet18
 
-from utils import create_balanced_sampler
+from utils import create_balanced_sampler, create_callbacks
 
 from torchvision import transforms, utils
 
@@ -17,8 +17,6 @@ from poutyne import torch_to_numpy
 from poutyne.layers import Lambda
 
 from CervoDataset import CervoDataset
-
-
 
 cuda_device = 0
 device = torch.device("cuda:%d" % cuda_device if torch.cuda.is_available() else "cpu")
@@ -84,7 +82,7 @@ class CervoResNet(nn.Module):
         # pour avoir le bon nombre de neurones de
         # sortie
         self.model.conv1 = nn.Conv2d(in_channels=60, out_channels=channels_after_conv_1, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-        self.model.fc = nn.Linear(dim_before_fc, 1)
+        self.model.fc = nn.Linear(dim_before_fc, 2)
 
         if pretrained:
             # TODO Q2A
@@ -115,7 +113,7 @@ def poutyne_train(pytorch_module):
     print(pytorch_module)
 
     optimizer = optim.SGD(pytorch_module.parameters(), lr=learning_rate)
-    loss_function = nn.BCELoss()
+    loss_function = nn.CrossEntropyLoss()
 
     # Poutyne Model
     model = Model(pytorch_module, optimizer, loss_function, metrics=['accuracy'])
@@ -124,7 +122,7 @@ def poutyne_train(pytorch_module):
     model.to(device)
 
     # Train
-    model.fit_generator(train_loader, valid_loader, epochs=num_epochs)
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("resnet"))
 
     # Test
     test_loss, test_acc = model.evaluate_generator(test_loader)

@@ -1,4 +1,5 @@
 import torch
+from poutyne.framework import ModelCheckpoint, CSVLogger
 
 
 def create_balanced_sampler(dataset):
@@ -19,3 +20,17 @@ def create_balanced_sampler(dataset):
     weights = torch.DoubleTensor(weights)
     sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
     return sampler
+
+
+def create_callbacks(name):
+    callbacks = [
+            # Save the latest weights to be able to continue the optimization at the end for more epochs.
+            ModelCheckpoint(name + '_last_epoch.ckpt', temporary_filename='last_epoch.ckpt.tmp'),
+
+            # Save the weights in a new file when the current model is better than all previous models.
+            ModelCheckpoint(name + '_best_epoch_{epoch}.ckpt', monitor='val_acc', mode='max', save_best_only=True, restore_best=True, verbose=True, temporary_filename='best_epoch.ckpt.tmp'),
+
+            # Save the losses and accuracies for each epoch in a TSV.
+            CSVLogger(name + '_log.tsv', separator='\t'),
+        ]
+    return callbacks
