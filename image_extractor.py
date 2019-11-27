@@ -17,7 +17,8 @@ def load_images():
 
     #crée une liste qui contient les cerveaux
     brain_list = []
-    n_brains = 500#len(ID)#à changer si vous voulez loader moins de cerveaux
+    label_list = []
+    n_brains = len(ID)#à changer si vous voulez loader moins de cerveaux
     for i in range(n_brains):
         print("Progression: ", i*100/n_brains, " %")
         #pour chaque cerveau, crée une liste qui contient toutes les coupes supperposées
@@ -53,9 +54,10 @@ def load_images():
                     cv2.imwrite(path+"merged/img_"+str(j)+".png", merged_image)
                     observation_list.append(merged_image)
                 brain_list.append(observation_list)
+                label_list.append(y[i])
             except:
                 pass
-    return brain_list,y
+    return brain_list,np.array(label_list)
 
 if __name__ == '__main__':
     X,y = load_images()
