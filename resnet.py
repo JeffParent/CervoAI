@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data.dataset import Subset
-from torchvision.models import resnet18
+from torchvision.models import resnet18, resnet101
 
 from utils import create_balanced_sampler, create_callbacks
 
@@ -70,7 +70,7 @@ class CervoResNet(nn.Module):
         super().__init__()
 
         # Crée le réseau de neurone pré-entraîné
-        self.model = resnet18(pretrained=pretrained)
+        self.model = resnet101(pretrained=pretrained)
 
         # Récupère le nombre de neurones avant
         # la couche de classification
@@ -122,7 +122,7 @@ def poutyne_train(pytorch_module):
     model.to(device)
 
     # Train
-    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("resnet"))
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("resnet101"))
 
     # Test
     test_loss, test_acc = model.evaluate_generator(test_loader)
