@@ -37,7 +37,7 @@ class CervoDataset(Dataset):
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", filename)
                 image = io.imread(img_name)
                 if self.transform is not None:
-                    trans = transforms.Compose(self.transform+[transforms.ToTensor()])
+                    trans = transforms.Compose([transforms.ToTensor()]+self.transform)
                     images.append(trans(image))
                 else:
                     images.append(transforms.ToTensor()(image))
