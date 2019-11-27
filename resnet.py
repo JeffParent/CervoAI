@@ -32,7 +32,7 @@ batch_size = 16
 learning_rate = 0.1
 num_epochs = 200
 
-cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
+cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transforms=transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
 
 num_data = len(cervo_dataset)
 indices = list(range(num_data))

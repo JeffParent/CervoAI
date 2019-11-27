@@ -11,7 +11,7 @@ from torchvision import transforms
 
 class CervoDataset(Dataset):
 
-    def __init__(self, csv_file, root_dir, transform = None):
+    def __init__(self, csv_file, root_dir, transform=None):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -36,7 +36,10 @@ class CervoDataset(Dataset):
             if filename[-3:] == "png":
                 img_name = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "merged", filename)
                 image = io.imread(img_name)
-                images.append(transforms.ToTensor()(image))
+                if self.transform is not None:
+                    transforms.Compose(self.transform.append(transforms.ToTensor))(image)
+                else:
+                    images.append(transforms.ToTensor()(image))
         X = torch.stack(images)
         X = X.flatten(end_dim=1)
         y = self.labels.iloc[idx, 1]
