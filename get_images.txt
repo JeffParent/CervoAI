@@ -1,2 +1,0 @@
-sftp ftpMedics@medics.crulrg.ulaval.ca
-get -r AI_FS_QC_img
