@@ -42,8 +42,8 @@ class CervoDataset(Dataset):
         
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        X_folder_path = os.path.join(self.root_dir, "12648-10464", "Coronal", "t1", "") #self.labels.iloc[int(idx/20), 0] à la place de "12648-10464"
-        y_folder_path = os.path.join(self.root_dir, "12648-10464", "Coronal", "labels", "")
+        X_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "t1", "") #self.labels.iloc[int(idx/20), 0] à la place de "12648-10464"
+        y_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
