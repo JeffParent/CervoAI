@@ -12,7 +12,7 @@ import cv2
 
 class CervoDataset(Dataset):
 
-    def __init__(self, csv_file, root_dir, transform=None):
+    def __init__(self, csv_file, root_dir, index, transform=None):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -20,15 +20,16 @@ class CervoDataset(Dataset):
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
+        self.index = index
         self.labels = pd.read_csv(csv_file)
         self.root_dir = root_dir
         self.transform = transform
 
     def __len__(self):
-        return 5 #len(self.labels)*20
+        return len(self.index)*20 #len(self.labels)*20
 
     def extract_image(self, img_folder_path, idx):
-        file = os.listdir(img_folder_path)[idx%20]
+        file = os.listdir(img_folder_path)[idx]
         filename = os.fsdecode(file)
         if filename[-3:] == "png":
             img_name = os.path.join(img_folder_path, filename)
@@ -36,14 +37,17 @@ class CervoDataset(Dataset):
             return image
         
     def __getitem__(self, idx):
+        rest = idx%20
+        idx = self.index[int(idx/20)]
+        
         if torch.is_tensor(idx):
             idx = idx.tolist()
         X_folder_path = os.path.join(self.root_dir, "12648-10464", "Coronal", "t1", "") #self.labels.iloc[int(idx/20), 0] à la place de "12648-10464"
         y_folder_path = os.path.join(self.root_dir, "12648-10464", "Coronal", "labels", "")
         
-        X = self.extract_image(X_folder_path, idx)
+        X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
-        y = self.extract_image(y_folder_path, idx)
+        y = self.extract_image(y_folder_path, rest)
         y = y[:,:,:3]
 
         if self.transform is not None:
@@ -54,19 +58,22 @@ class CervoDataset(Dataset):
             X = transforms.ToTensor()(X)
             y = transforms.ToTensor()(y)
 
-
+        print(idx, rest)
+        print(self.labels.iloc[idx, 0])
         print(X.shape,y.shape)
         return X, y
 
 
 class u_net():
     def __init__(self, csv_path, data_path, trained_model = None):
-        self.cervo_dataset = CervoDataset(csv_file=csv_path, root_dir=data_path)
+        self.csv_path = csv_path
+        self.data_path = data_path
         if trained_model != None:
             self.model = trained_model
 
-    def train(self, nb_epoch, learning_rate, momentum, batch_size):
-        self.cervo_loader = DataLoader(self.cervo_dataset, batch_size=batch_size)
+    def train(self, nb_epoch, learning_rate, momentum, batch_size, train_index):
+        self.cervo_dataset = CervoDataset(csv_file=self.csv_path, root_dir=self.data_path, index = train_index)
+        self.cervo_loader = DataLoader(self.cervo_dataset, batch_size=batch_size, shuffle = True)
         
         self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=3, init_features=32, pretrained=False)
 
@@ -103,7 +110,8 @@ class u_net():
         return self.model
 
 
-    def predict(self, image_index):
+    def predict(self, image_index, test_index):
+        self.cervo_dataset = CervoDataset(csv_file=self.csv_path, root_dir=self.data_path, index = test_index)
         self.model.eval()
         image, label = self.cervo_dataset.__getitem__(image_index)
         image = (image.unsqueeze(0)).to("cpu")
@@ -111,22 +119,30 @@ class u_net():
         with torch.no_grad():
             prediction = self.model(image)
         return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
-        
 
+     
+def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8):
+    linspace = np.arange(dataLen)
+    np.random.shuffle(linspace)
+    train_index = linspace[:int(dataLen*trainTestRatio)]
+    test_index = linspace[int(dataLen*trainTestRatio):]
+    return train_index, test_index
+    
+    
 
 if __name__ == '__main__':
-        unet = u_net(csv_path = 'data/raw/AI_FS_QC_img/data_AI_QC.csv',
-                      data_path = 'data/raw/AI_FS_QC_img/',
-                      trained_model = None)
+        unet = u_net(csv_path = 'data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = 'data/raw/AI_FS_QC_img/', trained_model = None)
 
-        trained = unet.train(nb_epoch = 1, learning_rate = 0.01, momentum = 0.99, batch_size = 1)
-
+        train_index, test_index = trainTestSplit(dataLen = 7000, trainTestRatio = 0.1)
         
-        image, prediction, label = unet.predict(image_index = 2)
-        
-        print(image.shape, prediction.shape, label.shape)
+        trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
+        torch.save(trained.state_dict(), "models/model0")
 
-        plt.imshow(image)
+        gray, prediction, label = unet.predict(image_index = 2, test_index = test_index)
+        
+        print(gray.shape, prediction.shape, label.shape)
+
+        plt.imshow(gray)
         plt.show()
         plt.imshow(prediction)
         plt.show()
