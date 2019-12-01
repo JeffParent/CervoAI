@@ -65,9 +65,10 @@ class CervoDataset(Dataset):
 
 
 class u_net():
-    def __init__(self, csv_path, data_path, trained_model = None):
+    def __init__(self, csv_path, data_path, trained_model = None, device = "cpu"):
         self.csv_path = csv_path
         self.data_path = data_path
+        self.device = device
         if trained_model != None:
             self.model = trained_model
 
@@ -77,7 +78,7 @@ class u_net():
         
         self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=3, init_features=32, pretrained=False)
 
-        self.model.to("cpu")
+        self.model.to(self.device)
 
         criterion = torch.nn.MSELoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr = learning_rate, momentum=momentum)
@@ -89,8 +90,8 @@ class u_net():
             start_time, train_losses = time.time(), []
             for i_batch, batch in enumerate(self.cervo_loader):
                 images, targets = batch
-                images = images.to("cpu")
-                targets = targets.to("cpu")
+                images = images.to(self.device)
+                targets = targets.to(self.device)
 
                 # ===================forward=====================
                 optimizer.zero_grad()
@@ -114,8 +115,8 @@ class u_net():
         self.cervo_dataset = CervoDataset(csv_file=self.csv_path, root_dir=self.data_path, index = test_index)
         self.model.eval()
         image, label = self.cervo_dataset.__getitem__(image_index)
-        image = (image.unsqueeze(0)).to("cpu")
-        label = (label.unsqueeze(0)).to("cpu")
+        image = (image.unsqueeze(0)).to(self.device)
+        label = (label.unsqueeze(0)).to(self.device)
         with torch.no_grad():
             prediction = self.model(image)
         return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
@@ -131,7 +132,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8):
     
 
 if __name__ == '__main__':
-        unet = u_net(csv_path = 'data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = 'data/raw/AI_FS_QC_img/', trained_model = None)
+        unet = u_net(csv_path = 'data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None)
 
         train_index, test_index = trainTestSplit(dataLen = 7000, trainTestRatio = 0.1)
         
@@ -140,8 +141,6 @@ if __name__ == '__main__':
 
         gray, prediction, label = unet.predict(image_index = 2, test_index = test_index)
         
-        print(gray.shape, prediction.shape, label.shape)
-
         plt.imshow(gray)
         plt.show()
         plt.imshow(prediction)
