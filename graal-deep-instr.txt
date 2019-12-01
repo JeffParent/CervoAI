@@ -1,5 +1,4 @@
 ssh legal9@132.203.120.129
-pswd: Medics092017
 
 travaillez dans des tmux pour qu'on puisse travailler en meme temps sans se piler sur les pieds
 commandes
@@ -10,14 +9,14 @@ tmux ls -> pour voir tous les tmux actifs
 tmux a -t #du terminal pour se rattacher au terminal
 
 dans tmux
-ctrtl + b suivi de d -> se détache du terminal (roule en background)
+ctrtl + b suivi de d -> se dï¿½tache du terminal (roule en background)
 ctrl+d -> quitte le terminal
  
 
-pour installer des dépendances, utilisez conda
+pour installer des dï¿½pendances, utilisez conda
 
 pour voir si les gpus sont dispo: nvidia-smi ou watch nvidia-smi
 
 Pour update le projet, utilisez git, on a juste a pusher local et puller sur le deep
 
-les données en binaires sont dans data/binary
+les donnï¿½es en binaires sont dans data/binary
