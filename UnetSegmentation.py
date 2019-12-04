@@ -58,9 +58,9 @@ class CervoDataset(Dataset):
             X = transforms.ToTensor()(X)
             y = transforms.ToTensor()(y)
 
-        print(idx, rest)
-        print(self.labels.iloc[idx, 0])
-        print(X.shape,y.shape)
+        #print(idx, rest)
+        #print(self.labels.iloc[idx, 0])
+        #print(X.shape,y.shape)
         return X, y
 
 
