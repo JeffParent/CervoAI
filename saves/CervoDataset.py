@@ -133,7 +133,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8):
 
 if __name__ == '__main__':
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=3, init_features=32, pretrained=False)
-        trained.load_state_dict(torch.load("../models/model0", map_location=torch.device('cpu')))
+        trained.load_state_dict(torch.load("../models/model1", map_location=torch.device('cpu')))
         
         unet = u_net(csv_path = '../data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = trained)
 
@@ -142,13 +142,11 @@ if __name__ == '__main__':
         #trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 1, train_index = train_index)
         #torch.save(trained.state_dict(), "../models/model0")
 
+        liste= []
+        for i in range(2,6):
+            gray, prediction, label = unet.predict(image_index = i, test_index = test_index)
+            liste.append(np.hstack((gray,prediction,label)))
+        img = np.vstack((liste[0],liste[1],liste[2],liste[3]))
         
-
-        gray, prediction, label = unet.predict(image_index = 2, test_index = test_index)
-        
-        plt.imshow(np.hstack((gray,prediction,label)))
-        plt.show()
-        plt.imshow(prediction)
-        plt.show()
-        plt.imshow(label)
+        plt.imshow(img)
         plt.show()
