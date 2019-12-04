@@ -89,6 +89,8 @@ class u_net():
 
             start_time, train_losses = time.time(), []
             for i_batch, batch in enumerate(self.cervo_loader):
+                if i_batch %100 == 0:
+                    print(" [-] batch no: ", i_batch)
                 images, targets = batch
                 images = images.to(self.device)
                 targets = targets.to(self.device)
@@ -135,7 +137,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8):
 if __name__ == '__main__':
         unet = u_net(csv_path = 'data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None)
 
-        train_index, test_index = trainTestSplit(dataLen = 7000, trainTestRatio = 0.1)
+        train_index, test_index = trainTestSplit(dataLen = 7180, trainTestRatio = 0.95)
         
         trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
         torch.save(trained.state_dict(), "models/model0")
