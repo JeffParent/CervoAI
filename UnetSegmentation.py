@@ -111,7 +111,8 @@ class u_net():
         return self.model
 
 
-    def predict(self, image_index, test_index):
+    def predict(self, image_index, test_index, device):
+        self.device = device
         self.cervo_dataset = CervoDataset(csv_file=self.csv_path, root_dir=self.data_path, index = test_index)
         self.model.eval()
         image, label = self.cervo_dataset.__getitem__(image_index)
@@ -139,7 +140,7 @@ if __name__ == '__main__':
         trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
         torch.save(trained.state_dict(), "models/model0")
 
-        gray, prediction, label = unet.predict(image_index = 2, test_index = test_index)
+        gray, prediction, label = unet.predict(image_index = 2, test_index = test_index, device = "cpu")
         
         plt.imshow(gray)
         plt.show()
