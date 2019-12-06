@@ -53,17 +53,17 @@ valid_dataset = Subset(cervo_dataset, valid_indices)
 train_indices = indices[:valid_split]
 train_dataset = Subset(cervo_dataset, train_indices)
 
-# balanced_train_sampler = create_balanced_sampler(train_dataset)
-# balanced_val_sampler = create_balanced_sampler(valid_dataset)
-# balanced_test_sampler = create_balanced_sampler(test_dataset)
+balanced_train_sampler = create_balanced_sampler(train_dataset)
+balanced_val_sampler = create_balanced_sampler(valid_dataset)
+balanced_test_sampler = create_balanced_sampler(test_dataset)
 
-# train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=balanced_train_sampler)
-# valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, sampler=balanced_val_sampler)
-# test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, sampler=balanced_test_sampler)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=balanced_train_sampler)
+valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, sampler=balanced_val_sampler)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, sampler=balanced_test_sampler)
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+# train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+# valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)
+# test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
 loaders = train_loader, valid_loader, test_loader
 
@@ -109,7 +109,7 @@ def poutyne_train(pytorch_module):
     model.to(device)
 
     # Train
-    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("2conv"))
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("2convShuffle"))
 
     # Test
     test_loss, test_acc = model.evaluate_generator(test_loader)
