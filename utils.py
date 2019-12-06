@@ -47,10 +47,10 @@ def create_confusion_matrix(pytorch_module, loader):
             # Transfer batch on GPU if needed.
             x = x.to("cuda")
             y = y.to("cuda")
-            y_total.extend(y)
+            y_total.extend(y.tolist())
             y_pred = pytorch_module(x)
             y_pred = torch.argmax(y_pred, dim=1)
-            y_pred_total.extend(y_pred)
+            y_pred_total.extend(y_pred.tolist())
     print("y: {}", y_total[12])
     print("y:{}", y_pred_total[12])
     return metrics.confusion_matrix(y_total, y_pred_total);
