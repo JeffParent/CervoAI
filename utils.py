@@ -48,8 +48,7 @@ def create_confusion_matrix(pytorch_module, loader):
             y = y.to("cuda")
             y_total.extend(y)
             y_pred = pytorch_module(x)
-            y_pred_total.extend(torch.argmax(y_pred))
     print("y: {}", y_total[12])
     print("y:{}", y_pred_total[12])
-    return metrics.confusion_matrix(y_total, y_pred_total)
+    return metrics.confusion_matrix(y_total, torch.argmax(y_pred_total, dim=1))
 
