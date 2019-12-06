@@ -48,5 +48,7 @@ def create_confusion_matrix(pytorch_module, loader):
             y_total.extend(y)
             y_pred = pytorch_module(x)
             y_pred_total.extend(y_pred)
+    print("y: {}", y_total[12])
+    print("y:{}", y_pred_total[12])
     return metrics.confusion_matrix(y_total, y_pred_total)
 
