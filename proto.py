@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data.dataset import Subset
-from utils import create_balanced_sampler
+from utils import create_balanced_sampler, create_confusion_matrix, create_callbacks
 
 from torchvision import transforms, utils
 
@@ -30,7 +30,7 @@ num_classes = 2
 # Training hyperparameters
 batch_size = 16
 learning_rate = 0.1
-num_epochs = 200
+num_epochs = 1
 
 cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
@@ -105,7 +105,7 @@ def poutyne_train(pytorch_module):
     model.to(device)
 
     # Train
-    model.fit_generator(train_loader, valid_loader, epochs=num_epochs)
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("2conv"))
 
     # Test
     test_loss, test_acc = model.evaluate_generator(test_loader)
@@ -114,3 +114,4 @@ def poutyne_train(pytorch_module):
 
 conv_net = create_convolutional_network()
 poutyne_train(conv_net)
+print(create_confusion_matrix(conv_net, test_loader))

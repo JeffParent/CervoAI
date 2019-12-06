@@ -1,5 +1,6 @@
 import torch
 from poutyne.framework import ModelCheckpoint, CSVLogger
+from sklearn import metrics
 
 
 def create_balanced_sampler(dataset):
@@ -34,3 +35,21 @@ def create_callbacks(name):
             CSVLogger(name + '_log.tsv', separator='\t'),
         ]
     return callbacks
+
+def create_confusion_matrix(pytorch_module, loader):
+    pytorch_module.eval()
+    with torch.no_grad():
+        loss_sum = 0.
+        acc_sum = 0.
+        example_count = 0
+        y_total = list()
+        y_pred_total = list()
+        for (x, y) in loader:
+            # Transfer batch on GPU if needed.
+            x = x.to("cuda")
+            y = y.to("cuda")
+            y_total.append(y)
+            y_pred = pytorch_module(x)
+            y_pred_total.append(y_pred)
+    return metrics.confusion_matrix(y_total, y_pred_total)
+
