@@ -53,9 +53,9 @@ valid_dataset = Subset(cervo_dataset, valid_indices)
 train_indices = indices[:valid_split]
 train_dataset = Subset(cervo_dataset, train_indices)
 
-balanced_train_sampler = create_balanced_sampler(train_dataset)
-balanced_val_sampler = create_balanced_sampler(valid_dataset)
-balanced_test_sampler = create_balanced_sampler(test_dataset)
+# balanced_train_sampler = create_balanced_sampler(train_dataset)
+# balanced_val_sampler = create_balanced_sampler(valid_dataset)
+# balanced_test_sampler = create_balanced_sampler(test_dataset)
 
 # train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=balanced_train_sampler)
 # valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, sampler=balanced_val_sampler)
