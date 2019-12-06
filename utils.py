@@ -1,6 +1,7 @@
 import torch
 from poutyne.framework import ModelCheckpoint, CSVLogger
 from sklearn import metrics
+from torchvision.transforms import ToTensor
 
 
 def create_balanced_sampler(dataset):
@@ -51,5 +52,5 @@ def create_confusion_matrix(pytorch_module, loader):
             y_pred_total.extend(y_pred)
     print("y: {}", y_total[12])
     print("y:{}", y_pred_total[12])
-    return metrics.confusion_matrix(y_total, torch.argmax(y_pred_total, dim=1))
+    return metrics.confusion_matrix(y_total, torch.argmax(ToTensor()(y_pred_total), dim=1))
 
