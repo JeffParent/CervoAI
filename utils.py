@@ -39,17 +39,14 @@ def create_callbacks(name):
 def create_confusion_matrix(pytorch_module, loader):
     pytorch_module.eval()
     with torch.no_grad():
-        loss_sum = 0.
-        acc_sum = 0.
-        example_count = 0
         y_total = list()
         y_pred_total = list()
         for (x, y) in loader:
             # Transfer batch on GPU if needed.
             x = x.to("cuda")
             y = y.to("cuda")
-            y_total.append(y)
+            y_total.extend(y)
             y_pred = pytorch_module(x)
-            y_pred_total.append(y_pred)
+            y_pred_total.extend(y_pred)
     return metrics.confusion_matrix(y_total, y_pred_total)
 
