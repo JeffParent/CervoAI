@@ -34,10 +34,27 @@ num_epochs = 200
 
 cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/', transform=[transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
-num_data = len(cervo_dataset)
-indices = list(range(num_data))
-np.random.shuffle(indices)
+#num_data = len(cervo_dataset)
+#indices = list(range(num_data))
 
+indices = list()
+for index in range(len(cervo_dataset)):
+    label = cervo_dataset.labels.iloc[index, 1]
+    if label == 1:
+        indices.append(index)
+
+max_number_good_seg = len(indices)
+print(len(indices))
+count = 0
+while count != max_number_good_seg:
+    indx = np.random.randint(0, len(cervo_dataset))
+    if cervo_dataset[indx][1] == 1:
+        continue
+    indices.append(indx)
+    count += 1
+print(len(indices))
+num_data = len(indices)
+np.random.shuffle(indices)
 
 # splitting into train, valid and test datasets
 test_split = math.floor(train_split_percent * num_data)
@@ -53,13 +70,17 @@ valid_dataset = Subset(cervo_dataset, valid_indices)
 train_indices = indices[:valid_split]
 train_dataset = Subset(cervo_dataset, train_indices)
 
-balanced_train_sampler = create_balanced_sampler(train_dataset)
-balanced_val_sampler = create_balanced_sampler(valid_dataset)
-balanced_test_sampler = create_balanced_sampler(test_dataset)
+#balanced_train_sampler = create_balanced_sampler(train_dataset)
+#balanced_val_sampler = create_balanced_sampler(valid_dataset)
+#balanced_test_sampler = create_balanced_sampler(test_dataset)
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=balanced_train_sampler)
-valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, sampler=balanced_val_sampler)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, sampler=balanced_test_sampler)
+#train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, sampler=balanced_train_sampler)
+#valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, sampler=balanced_val_sampler)
+#test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, sampler=balanced_test_sampler)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
 
 loaders = train_loader, valid_loader, test_loader
 
@@ -122,7 +143,7 @@ def poutyne_train(pytorch_module):
     model.to(device)
 
     # Train
-    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("resnet101"))
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("resnet101EqualData"))
 
     # Test
     test_loss, test_acc = model.evaluate_generator(test_loader)
