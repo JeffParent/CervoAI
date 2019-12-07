@@ -37,19 +37,22 @@ cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', ro
 #num_data = len(cervo_dataset)
 #indices = list(range(num_data))
 indices = list()
-for index, label in enumerate(cervo_dataset.labels):
+for index in range(len(cervo_dataset)):
+    label = cervo_dataset.labels.iloc[index, 1]
     if label == 1:
         indices.append(index)
 
 max_number_good_seg = len(indices)
+print(len(indices))
 count = 0
 while count != max_number_good_seg:
-    indx = np.randint(0, len(cervo_dataset))
+    indx = np.random.randint(0, len(cervo_dataset))
     if cervo_dataset[indx][1] == 1:
         continue
     indices.append(indx)
     count += 1
 print(len(indices))
+num_data = len(indices)
 np.random.shuffle(indices)
 
 
@@ -123,7 +126,7 @@ def poutyne_train(pytorch_module):
     model.to(device)
 
     # Train
-    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("2convShuffle"))
+    model.fit_generator(train_loader, valid_loader, epochs=num_epochs, callbacks=create_callbacks("2convEqualData"))
 
     # Test
     test_loss, test_acc = model.evaluate_generator(test_loader)
