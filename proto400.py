@@ -30,7 +30,7 @@ num_classes = 2
 # Training hyperparameters
 batch_size = 16
 learning_rate = 0.1
-num_epochs = 50
+num_epochs = 30
 
 cervo_dataset = CervoDataset(csv_file='data/raw/AI_FS_QC_img/data_AI_QC.csv', root_dir='data/raw/AI_FS_QC_img/')
 
