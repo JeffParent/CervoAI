@@ -148,6 +148,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     Pass = labels[np.where(labels[:,1] == 0)]
     Fail = labels[np.where(labels[:,1] == 1)]
 
+    dataLen -= len(Fail)
     linspace = np.arange(dataLen)
     np.random.seed(seed=42)
     np.random.shuffle(linspace)
