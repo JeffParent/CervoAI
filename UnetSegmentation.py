@@ -143,7 +143,7 @@ class u_net():
         return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
 
      
-def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = '../data/raw/AI_FS_QC_img/data_AI_QC.csv'):
+def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
     labels = pd.read_csv(csv_file).values
     Pass = labels[np.where(labels[:,1] == 0)]
     Fail = labels[np.where(labels[:,1] == 1)]
@@ -165,10 +165,10 @@ if __name__ == '__main__':
     print("Version 1.0.")
     for label in range(1):
         print("Training zone %s segmentation" %(label))
-        unet = u_net(data_path = '../data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)
+        unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)
 
         train_index, test_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
         
         trained = unet.train(nb_epoch = 1, learning_rate = 0.01, momentum = 0.99, batch_size = 1, train_index = train_index)
-        torch.save(trained.state_dict(), "../models/model_zone_%s" %(label))
+        torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
