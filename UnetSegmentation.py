@@ -109,6 +109,8 @@ class u_net():
 
             start_time, train_losses = time.time(), []
             for i_batch, batch in enumerate(self.cervo_loader):
+                if i_batch %100 == 0:
+                    print(" [-] batch no: ", i_batch)
                 images, targets = batch
                 images = images.to(self.device)
                 targets = targets.to(self.device)
