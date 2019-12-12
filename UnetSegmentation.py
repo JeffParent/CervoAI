@@ -172,6 +172,6 @@ if __name__ == '__main__':
 
         train_index, test_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
         
-        trained = unet.train(nb_epoch = 1, learning_rate = 0.01, momentum = 0.99, batch_size = 1, train_index = train_index)
+        trained = unet.train(nb_epoch = 1, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
         torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
