@@ -3,10 +3,13 @@ import numpy as np
 X = np.load("zone_0_scores_X.npy")
 y = np.load("zone_0_scores_y.npy")
 
-print(np.max(X))
-mean = np.sum(X, axis = 1)/len(X[0])
+mean = np.sum(X, axis = 0)/len(X)
 
-X_pass = mean[np.where(y == 0)]
-X_fail = mean[np.where(y == 1)]
+X_pass = X[np.where(y == 0),:][0]
+mean_pass = np.sum(X_pass, axis = 0)/len(X_pass)
+X_fail = X[np.where(y == 1),:][0]
+mean_fail = np.sum(X_fail, axis = 0)/len(X_fail)
 
-print(sum(X_pass)/len(X_pass), sum(X_fail)/len(X_fail))
+#print(mean_fail, mean_pass)
+for i in range(len(mean_fail)):
+    print(mean_fail[i], mean_pass[i])

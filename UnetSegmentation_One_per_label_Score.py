@@ -150,7 +150,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
 
 if __name__ == '__main__':
     print("Version 1.0.0")
-    for label in range(1):
+    for label in range(2):
         print("Zone %s segmentation" %(label))
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
         trained.load_state_dict(torch.load("models/model_zone_%s"%(label)))
