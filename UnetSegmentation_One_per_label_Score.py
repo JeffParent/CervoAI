@@ -105,9 +105,8 @@ class u_net():
         label = (label.unsqueeze(0)).to("cpu")
         with torch.no_grad():
             prediction = self.model(image)
-        prediction.to("cpu")
         image = image[0].cpu().permute(1, 2, 0).numpy()
-        prediction = prediction.detach()[0].permute(1, 2, 0).numpy()
+        prediction = prediction.detach()[0].cpu().permute(1, 2, 0).numpy()
         label = label[0].permute(1, 2, 0).numpy()
         return image, prediction, label 
 
