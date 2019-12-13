@@ -70,9 +70,10 @@ class CervoDataset(Dataset):
 
         y = self.extract_image(y_folder_path, rest)
         y = y[:,:,:3]
-        y = self.separate_label(y,self.label_idx)
-        print(X.shape, y.shape, np.max(X), np.max(y))
-        print(1/0)
+        #y = self.separate_label(y,self.label_idx)
+        
+        #print(X.shape, y.shape, np.max(X), np.max(y))
+        #print(1/0)
 
         if self.transform is not None:
             trans = transforms.Compose([transforms.ToTensor()]+self.transform)
@@ -97,7 +98,7 @@ class u_net():
         self.cervo_dataset = CervoDataset(root_dir=self.data_path, index = train_index, label_idx = self.label_idx)
         self.cervo_loader = DataLoader(self.cervo_dataset, batch_size=batch_size, shuffle = True)
         
-        self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
+        self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=3, init_features=32, pretrained=False)
 
         self.model.to(self.device)
 
