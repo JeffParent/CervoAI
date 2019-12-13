@@ -97,7 +97,7 @@ if __name__ == '__main__':
         for img in range(20):
             image, label = cervo_dataset_test.__getitem__(brain_no*20 + img)
 
-            score.append(compute_Score(image, Label))
+            score.append(compute_Score(image, label))
         X.append(score)
         y.append(0)
     
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         for img in range(20):
             image, label = cervo_dataset_Fail.__getitem__(brain_no*20 + img)
 
-            score.append(compute_Score(image, Label))
+            score.append(compute_Score(image, label))
         X.append(score)
         y.append(1)
 
