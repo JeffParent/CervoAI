@@ -105,9 +105,18 @@ class u_net():
         label = (label.unsqueeze(0)).to("cpu")
         with torch.no_grad():
             prediction = self.model(image)
-        image = image[0].cpu().permute(1, 2, 0).numpy()
-        prediction = prediction.detach()[0].cpu().permute(1, 2, 0).numpy()
+        #print(image.shape, prediction.shape, label.shape)
+        image.cpu()
+        prediction.cpu()
+        label.cpu()
+        
+        prediction[np.where(prediction >= 0.5)] = 1
+        prediction[np.where(prediction < 0.5)] = 0
+
+        image = image[0].permute(1, 2, 0).numpy()
+        prediction = prediction.detach()[0].permute(1, 2, 0).numpy()
         label = label[0].permute(1, 2, 0).numpy()
+
         return image, prediction, label 
 
     def score(self, prediction, label):
@@ -117,6 +126,8 @@ class u_net():
             print(total)
             print(1/0)
         if total == 0:
+            print(total)
+            print(1/0)
             return 0
         return good_pred/total
 
@@ -142,7 +153,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
 
 if __name__ == '__main__':
     print("Version 1.0.0")
-    for label in range(2):
+    for label in range(1):
         print("Zone %s segmentation" %(label))
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
         trained.load_state_dict(torch.load("models/model_zone_%s"%(label)))
