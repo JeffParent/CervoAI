@@ -97,7 +97,7 @@ class u_net():
 
 
     def predict(self, image_index, test_index):
-        self.model.to("cpu")
+        #self.model.to(self.device)
         self.cervo_dataset = CervoDataset(root_dir=self.data_path, index = test_index, label_idx = self.label_idx)
         self.model.eval()
         image, label = self.cervo_dataset.__getitem__(image_index)
