@@ -167,13 +167,13 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     
 
 if __name__ == '__main__':
-    print("Version 1.0.2")
-    for label in range(1):
+    print("Version 1.0.3")
+    for label in range(10):
         print("Training zone %s segmentation" %(label))
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)
 
         train_index, test_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
         
-        trained = unet.train(nb_epoch = 1, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
+        trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
         torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
