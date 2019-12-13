@@ -89,8 +89,8 @@ if __name__ == '__main__':
 
     X = []
     y = []
-    cervo_dataset_test = CervoDataset(root_dir=self.data_path, index = test_index)
-    cervo_dataset_Fail = CervoDataset(root_dir=self.data_path, index = Fail_index)
+    cervo_dataset_test = CervoDataset(root_dir='data/raw/AI_FS_QC_img/', index = test_index)
+    cervo_dataset_Fail = CervoDataset(root_dir='data/raw/AI_FS_QC_img/', index = Fail_index)
     
     for brain_no in range(len(test_index)):
         score = []
