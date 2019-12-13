@@ -25,7 +25,7 @@ class CervoDataset(Dataset):
         self.transform = transform
 
     def __len__(self):
-        return len(self.index)*20 #len(self.labels)*20
+        return len(self.index)*20
 
     def separate_label(self,image,label_idx):
         legende = np.array([[136,  34,  51],
@@ -57,14 +57,12 @@ class CervoDataset(Dataset):
         
     def __getitem__(self, idx):
         rest = idx%20
-        #idx = self.index[int(idx/20)]
         
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        print(self.index[int(idx/20), 0])
-        X_folder_path = os.path.join(self.root_dir, "12648-10464", "Coronal", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
-        y_folder_path = os.path.join(self.root_dir, "12648-10464", "Coronal", "labels", "")
+        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
+        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
@@ -73,7 +71,9 @@ class CervoDataset(Dataset):
         y = self.extract_image(y_folder_path, rest)
         y = y[:,:,:3]
         y = self.separate_label(y,self.label_idx)
-
+        
+        #print(X.shape, y.shape, np.max(X), np.max(y))
+        #print(1/0)
 
         if self.transform is not None:
             trans = transforms.Compose([transforms.ToTensor()]+self.transform)
@@ -83,12 +83,11 @@ class CervoDataset(Dataset):
             X = transforms.ToTensor()(X)
             y = transforms.ToTensor()(y)
 
-        print("Cerveau no:", int(idx/20), "Image no: ", rest)
         return X, y
 
 
 class u_net():
-    def __init__(self, data_path, trained_model = None, device = "cpu", label_idx = 0):
+    def __init__(self, data_path, trained_model = None, device = "cuda", label_idx = 0):
         self.label_idx = label_idx
         self.data_path = data_path
         self.device = device
@@ -99,7 +98,7 @@ class u_net():
         self.cervo_dataset = CervoDataset(root_dir=self.data_path, index = train_index, label_idx = self.label_idx)
         self.cervo_loader = DataLoader(self.cervo_dataset, batch_size=batch_size, shuffle = True)
         
-        self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=3, init_features=32, pretrained=False)
+        self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
 
         self.model.to(self.device)
 
@@ -112,6 +111,8 @@ class u_net():
 
             start_time, train_losses = time.time(), []
             for i_batch, batch in enumerate(self.cervo_loader):
+                if i_batch %100 == 0:
+                    print(" [-] batch no: ", i_batch)
                 images, targets = batch
                 images = images.to(self.device)
                 targets = targets.to(self.device)
@@ -143,22 +144,15 @@ class u_net():
         label = (label.unsqueeze(0)).to(self.device)
         with torch.no_grad():
             prediction = self.model(image)
-        prediction[np.where(prediction >= 0.5)] = 1
-        prediction[np.where(prediction < 0.5)] = 0
         return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
 
-    def score(self, prediction, label):
-        good_pred = len(np.where((prediction + label) == 2)[0])
-        total = good_pred + len(np.where((prediction + label) == 1)[0])
-        return good_pred/total
-        
-
      
-def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = '../data/raw/AI_FS_QC_img/data_AI_QC.csv'):
+def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
     labels = pd.read_csv(csv_file).values
     Pass = labels[np.where(labels[:,1] == 0)]
     Fail = labels[np.where(labels[:,1] == 1)]
 
+    dataLen -= len(Fail)
     linspace = np.arange(dataLen)
     np.random.seed(seed=42)
     np.random.shuffle(linspace)
@@ -173,27 +167,13 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = '../data/raw
     
 
 if __name__ == '__main__':
-    for label in range(2):
-        trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
-        trained.load_state_dict(torch.load("../models/model_zone_%s"%(label), map_location=torch.device('cpu')))
-        
-        unet = u_net(data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = trained, label_idx = label)
-        #unet = u_net(data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = None, label_idx = label)
+    print("Version 1.0.3")
+    for label in range(10):
+        print("Training zone %s segmentation" %(label))
+        unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)
 
-        train_index, test_index = trainTestSplit(dataLen = 2, trainTestRatio = 0.5)
+        train_index, test_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
         
-        #trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 1, train_index = train_index)
-        #torch.save(trained.state_dict(), "../models/modeltest0")
+        trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
+        torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
-        liste= []
-        for i in range(2,6):
-            gray, prediction, label = unet.predict(image_index = i, test_index = test_index)
-            print(unet.score(prediction, label))
-            liste.append(np.hstack((gray,prediction,label)))
-            #liste.append(np.hstack((prediction,label)))
-            #liste.append(label)
-        img = np.vstack((liste[0],liste[1],liste[2],liste[3]))
-        
-        plt.imshow(img[:,:,0])
-        #plt.imshow(img)
-        plt.show()
