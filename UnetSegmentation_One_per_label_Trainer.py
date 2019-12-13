@@ -61,8 +61,8 @@ class CervoDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
-        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "labels", "")
+        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
+        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
@@ -167,8 +167,8 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     
 
 if __name__ == '__main__':
-    print("Version 1.0.3")
-    for label in range(10):
+    print("Version 1.0.4")
+    for label in range(2):
         print("Training zone %s segmentation" %(label))
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)
 
