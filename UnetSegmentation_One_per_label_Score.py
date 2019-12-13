@@ -61,8 +61,8 @@ class CervoDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
-        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "labels", "")
+        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
+        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     for label in range(2):
         print("Zone %s segmentation" %(label))
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
-        trained.load_state_dict(torch.load("models/model_zone_%s"%(label)))
+        trained.load_state_dict(torch.load("models/Axial_model_zone_%s"%(label)))
         trained.cuda()
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = trained, label_idx = label)
 
@@ -178,8 +178,8 @@ if __name__ == '__main__':
             y.append(1)
         X = np.array(X)
         y = np.array(y)
-        np.save("saves/zone_%s_scores_X" %(label), X)
-        np.save("saves/zone_%s_scores_y" %(label), y)
+        np.save("saves/Axial_zone_%s_scores_X" %(label), X)
+        np.save("saves/Axial_zone_%s_scores_y" %(label), y)
         #trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
         #torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
