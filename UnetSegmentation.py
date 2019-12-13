@@ -43,7 +43,7 @@ class CervoDataset(Dataset):
         mask = cv2.inRange(image, legende[label_idx], legende[label_idx])
         output = cv2.bitwise_and(image, image, mask = mask)
         gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
-        gray[np.where(gray>0)] = 255
+        gray[np.where(gray>0)] = 1
 
         return gray
 
@@ -66,7 +66,7 @@ class CervoDataset(Dataset):
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
-        X = cv2.cvtColor(X, cv2.COLOR_BGR2GRAY)
+        X = cv2.cvtColor(X, cv2.COLOR_BGR2GRAY)/255
 
         y = self.extract_image(y_folder_path, rest)
         y = y[:,:,:3]
@@ -165,7 +165,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     
 
 if __name__ == '__main__':
-    print("Version 1.0.")
+    print("Version 1.0.1")
     for label in range(1):
         print("Training zone %s segmentation" %(label))
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)

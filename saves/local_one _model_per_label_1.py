@@ -165,22 +165,23 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = '../data/raw
     
 
 if __name__ == '__main__':
-    for label in range(3):
+    for label in range(1):
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
-        #trained.load_state_dict(torch.load("../models/model1", map_location=torch.device('cpu')))
+        trained.load_state_dict(torch.load("../models/model_zone_0", map_location=torch.device('cpu')))
         
-        #unet = u_net(csv_path = '../data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = trained)
-        unet = u_net(data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = None, label_idx = label)
+        unet = u_net(data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = trained, label_idx = label)
+        #unet = u_net(data_path = '../data/raw/AI_FS_QC_img/', device = "cpu", trained_model = None, label_idx = label)
 
         train_index, test_index = trainTestSplit(dataLen = 2, trainTestRatio = 0.5)
         
-        trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 1, train_index = train_index)
-        torch.save(trained.state_dict(), "../models/modeltest0")
+        #trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 1, train_index = train_index)
+        #torch.save(trained.state_dict(), "../models/modeltest0")
 
         liste= []
         for i in range(2,6):
             gray, prediction, label = unet.predict(image_index = i, test_index = test_index)
-            liste.append(np.hstack((gray,prediction,label)))
+            #liste.append(np.hstack((gray,prediction,label)))
+            liste.append(prediction)
         img = np.vstack((liste[0],liste[1],liste[2],liste[3]))
         
         plt.imshow(img[:,:,0])
