@@ -106,10 +106,10 @@ class u_net():
         with torch.no_grad():
             prediction = self.model(image)
         #print(image.shape, prediction.shape, label.shape)
-        image.cpu()
-        prediction.cpu()
-        label.cpu()
-        
+        image = image.cpu()
+        prediction = prediction.cpu()
+        label = label.cpu()
+
         prediction[np.where(prediction >= 0.5)] = 1
         prediction[np.where(prediction < 0.5)] = 0
 
