@@ -153,16 +153,16 @@ if __name__ == '__main__':
         for brain_no in range(len(test_index)):
             score = []
             for img in range(20):
-                gray, prediction, label = unet.predict(brain_no*20 + img, test_index)
-                score.append(unet.score(prediction, label))
+                gray, prediction, Label = unet.predict(brain_no*20 + img, test_index)
+                score.append(unet.score(prediction, Label))
             X.append(score)
             y.append(0)
         
         for brain_no in range(len(Fail_index)):
             score = []
             for img in range(20):
-                gray, prediction, label = unet.predict(brain_no*20 + img, Fail_index)
-                score.append(unet.score(prediction, label))
+                gray, prediction, Label = unet.predict(brain_no*20 + img, Fail_index)
+                score.append(unet.score(prediction, Label))
             X.append(score)
             y.append(1)
         X = np.array(X)
