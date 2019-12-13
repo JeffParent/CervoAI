@@ -102,9 +102,11 @@ class u_net():
         self.model.eval()
         image, label = self.cervo_dataset.__getitem__(image_index)
         image = (image.unsqueeze(0)).to(self.device)
-        label = (label.unsqueeze(0)).to(self.device)
+        label = (label.unsqueeze(0)).to("cpu")
         with torch.no_grad():
             prediction = self.model(image)
+        prediction.to("cpu")
+        image.to("cpu")
         return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
 
     def score(self, prediction, label):
