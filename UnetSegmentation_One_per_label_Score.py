@@ -107,7 +107,10 @@ class u_net():
             prediction = self.model(image)
         prediction.to("cpu")
         image.to("cpu")
-        return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
+        image = image[0].permute(1, 2, 0).numpy()
+        prediction = prediction.detach()[0].permute(1, 2, 0).numpy()
+        label = label[0].permute(1, 2, 0).numpy()
+        return image, prediction, label 
 
     def score(self, prediction, label):
         good_pred = len(np.where((prediction + label) == 2)[0])
