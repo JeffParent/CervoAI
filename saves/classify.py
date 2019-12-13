@@ -1,13 +1,16 @@
 import numpy as np
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 
-X0 = np.load("zone_1_scores_X.npy")
-X1 = np.load("zone_0_scores_X.npy")
-X = np.concatenate((X0,X1),axis = 1)
+X0 = np.load("Axial_zone_1_scores_X.npy")
+X1 = np.load("Axial_zone_0_scores_X.npy")
+X2 = np.load("zone_1_scores_X.npy")
+X3 = np.load("zone_0_scores_X.npy")
+X = np.concatenate((X0,X1, X2, X3),axis = 1)
 y = np.load("zone_0_scores_y.npy")
 
-
+print(X.shape)
 X_pass = X[np.where(y == 0),:][0]
 X_fail = X[np.where(y == 1),:][0]
 
@@ -32,8 +35,11 @@ for gamma in gamma_list:
 print("SVM: Meilleurs paramètres: gamma: %s, C: %s" %(maximum_score_SVM[1][0], maximum_score_SVM[1][1]))
 
 
-clf = SVC(gamma=0.001, C = 20000)
+clf = SVC(gamma=maximum_score_SVM[1][0], C = maximum_score_SVM[1][1])
 clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+print(confusion_matrix(y_test, y_pred))
+
 print(clf.score(X_train,y_train))
 print(clf.score(X_test,y_test))
 
