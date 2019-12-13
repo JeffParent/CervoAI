@@ -43,7 +43,7 @@ class CervoDataset(Dataset):
         mask = cv2.inRange(image, legende[label_idx], legende[label_idx])
         output = cv2.bitwise_and(image, image, mask = mask)
         gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
-        gray[np.where(gray>0)] = 1
+        gray[np.where(gray>0)] = 1.0
 
         return gray
 
@@ -66,7 +66,7 @@ class CervoDataset(Dataset):
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
-        X = cv2.cvtColor(X, cv2.COLOR_BGR2GRAY)/255
+        X = cv2.cvtColor(X, cv2.COLOR_BGR2GRAY)/255.0
 
         y = self.extract_image(y_folder_path, rest)
         y = y[:,:,:3]
