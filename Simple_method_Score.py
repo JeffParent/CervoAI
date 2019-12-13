@@ -65,7 +65,22 @@ def compute_Score(X,y):
         return 0
     return good_pred/total
 
-    
+def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
+    labels = pd.read_csv(csv_file).values
+    Pass = labels[np.where(labels[:,1] == 0)]
+    Fail = labels[np.where(labels[:,1] == 1)]
+
+    dataLen -= len(Fail)
+    linspace = np.arange(dataLen)
+    np.random.seed(seed=42)
+    np.random.shuffle(linspace)
+    train_index = linspace[:int(dataLen*trainTestRatio)]
+    test_index = linspace[int(dataLen*trainTestRatio):]
+    train_index = Pass[train_index]
+    test_index = Pass[test_index]
+    print("nb. pass: ", len(Pass))
+    print("nb. fail: ", len(Fail))
+    return train_index, test_index, Fail  
 
 if __name__ == '__main__':
     print("Version 1.1")
