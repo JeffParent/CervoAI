@@ -138,6 +138,7 @@ if __name__ == '__main__':
         print("Zone %s segmentation" %(label))
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
         trained.load_state_dict(torch.load("models/model_zone_%s"%(label)))
+        trained.to("cuda")
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = trained, label_idx = label)
 
         train_index, test_index, Fail_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
