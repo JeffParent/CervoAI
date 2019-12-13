@@ -107,6 +107,11 @@ class u_net():
             prediction = self.model(image)
         return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
 
+    def score(self, prediction, label):
+        good_pred = len(np.where((prediction + label) == 2)[0])
+        total = good_pred + len(np.where((prediction + label) == 1)[0])
+        return good_pred/total
+
      
 def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
     labels = pd.read_csv(csv_file).values
@@ -132,7 +137,7 @@ if __name__ == '__main__':
     for label in range(2):
         print("Zone %s segmentation" %(label))
         trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=1, out_channels=1, init_features=32, pretrained=False)
-        trained.load_state_dict(torch.load("models/model_zone_%s"%(label), map_location=torch.device('cuda')))
+        trained.load_state_dict(torch.load("models/model_zone_%s"%(label)))
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = trained, label_idx = label)
 
         train_index, test_index, Fail_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
