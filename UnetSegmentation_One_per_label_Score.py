@@ -113,6 +113,8 @@ class u_net():
     def score(self, prediction, label):
         good_pred = len(np.where((prediction + label) == 2)[0])
         total = good_pred + len(np.where((prediction + label) == 1)[0])
+        if total == 0:
+            return 0
         return good_pred/total
 
      
