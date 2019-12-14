@@ -17,16 +17,20 @@ X = np.concatenate((X0,X1,X2,X3),axis = 1)
 #X = np.nan_to_num(np.load("One_for_all_X_2.npy"),copy=True)
 y = np.load("zone_0_scores_y.npy")
 
+
+X = np.load("Coronal_simple_scores_X_total.npy")
+y = np.load("Coronal_simple_scores_y_total.npy")
+
 num_bins = 20
 fig, ax = pyplot.subplots()
 # the histogram of the data
-Pass = X6[np.where(y == 0)]
-Fail = X6[np.where(y == 1)]
+Pass = X[np.where(y == 0)]
+Fail = X[np.where(y == 1)]
 
 n, bins, patches = ax.hist(np.reshape(Pass, (len(Pass)*20,)), num_bins, density=1, label = "Pass distribution")
 n, bins, patches = ax.hist(np.reshape(Fail, (len(Fail)*20,)), num_bins, density=1, label = "Fail distribution")
 pyplot.legend()
-pyplot.ylabel("Proportion de l'aire de segmentation sur l'aire totale")
+#pyplot.ylabel("Proportion de l'aire de segmentation sur l'aire totale")
 pyplot.xlabel("Proportion de l'aire de segmentation sur l'aire totale")
 pyplot.title("Distribution des proportions")
 pyplot.show()

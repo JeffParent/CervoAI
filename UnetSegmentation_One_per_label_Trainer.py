@@ -13,11 +13,10 @@ import cv2
 class CervoDataset(Dataset):
     def __init__(self, root_dir, index, label_idx, transform=None):
         """
-        Args:
-            csv_file (string): Path to the csv file with annotations.
-            root_dir (string): Directory with all the images.
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
+        Dataset pour les données
+        In
+            root_dir: dossier qui contient les données
+            index: Nom des cerveaux
         """
         self.label_idx = label_idx
         self.index = index
@@ -28,6 +27,14 @@ class CervoDataset(Dataset):
         return len(self.index)*20
 
     def separate_label(self,image,label_idx):
+        '''
+        Isole la zone d'intérêt (cortex par exemple)
+        In 
+            image: label dont on extrait la zone
+            label_idx: no de la zone à extraire
+        Out
+            Image grise 256x256x1 de la zone extraite
+        '''
         legende = np.array([[136,  34,  51],
                             [238, 204, 136],
                             [185, 119, 232],
@@ -41,13 +48,18 @@ class CervoDataset(Dataset):
         legende = legende[:,::-1]
 
         mask = cv2.inRange(image, legende[label_idx], legende[label_idx])
-        #output = cv2.bitwise_and(image, image, mask = mask)
-        #gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
-        #gray[np.where(gray>0)] = 255
 
         return mask
 
     def extract_image(self, img_folder_path, idx):
+        '''
+        Extrait l'image demandée
+        In
+            img_folder_path: dossier du cerveau
+            idx: indexe de l'image à extraire du cerveau
+        Out
+            Image 256x256x3
+        '''
         file = os.listdir(img_folder_path)[idx]
         filename = os.fsdecode(file)
         if filename[-3:] == "png":
@@ -56,12 +68,20 @@ class CervoDataset(Dataset):
             return image
         
     def __getitem__(self, idx):
+        '''
+        Extrait l'image du cerveau demandé
+        In
+            Idx: indexe entre 0 et __len__
+        Out
+            X: Image grise 265x256x1
+            y: Image du label 265x256x1
+        '''
         rest = idx%20
         
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
+        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "t1", "") 
         y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
@@ -72,8 +92,6 @@ class CervoDataset(Dataset):
         y = y[:,:,:3]
         y = self.separate_label(y,self.label_idx)
         
-        #print(X.shape, y.shape, np.max(X), np.max(y))
-        #print(1/0)
 
         if self.transform is not None:
             trans = transforms.Compose([transforms.ToTensor()]+self.transform)
@@ -88,6 +106,13 @@ class CervoDataset(Dataset):
 
 class u_net():
     def __init__(self, data_path, trained_model = None, device = "cuda", label_idx = 0):
+        '''
+        In
+            data_path: path vers les images
+            trained_model: modèle unet qui predit la segmetation
+            device = "cpu" ou "cuda"
+            label_idx: zone qu'on veux segmenter
+        '''
         self.label_idx = label_idx
         self.data_path = data_path
         self.device = device
@@ -95,6 +120,14 @@ class u_net():
             self.model = trained_model
 
     def train(self, nb_epoch, learning_rate, momentum, batch_size, train_index):
+        '''
+        Entraîne le modèle unet avec une entrée de 256x256x1et une sortie de 256x256x1
+        In
+            nb_epoch, learning_rate, momentum, batch_size: hyperparamètres
+            train_index: noms des cerveaux à entrainer
+        Out
+            model entrainé
+        '''
         self.cervo_dataset = CervoDataset(root_dir=self.data_path, index = train_index, label_idx = self.label_idx)
         self.cervo_loader = DataLoader(self.cervo_dataset, batch_size=batch_size, shuffle = True)
         
@@ -135,19 +168,16 @@ class u_net():
         return self.model
 
 
-    def predict(self, image_index, test_index):
-        self.model.to("cpu")
-        self.cervo_dataset = CervoDataset(root_dir=self.data_path, index = test_index, label_idx = self.label_idx)
-        self.model.eval()
-        image, label = self.cervo_dataset.__getitem__(image_index)
-        image = (image.unsqueeze(0)).to(self.device)
-        label = (label.unsqueeze(0)).to(self.device)
-        with torch.no_grad():
-            prediction = self.model(image)
-        return image[0].permute(1, 2, 0).numpy(), prediction.detach()[0].permute(1, 2, 0).numpy(), label[0].permute(1, 2, 0).numpy()
-
-     
 def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
+    '''
+    Sépare les données en train et test. 
+    In:
+        datalen: nombre de cerveaux à traîter
+        traintestRatio: ration entre train et test
+        csv_file: path vers le csv
+    Out:
+        Array qui contient les noms des cerveaux pour train et test des Pass ainsi que pour les Fails
+    '''
     labels = pd.read_csv(csv_file).values
     Pass = labels[np.where(labels[:,1] == 0)]
     Fail = labels[np.where(labels[:,1] == 1)]
@@ -167,7 +197,10 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     
 
 if __name__ == '__main__':
-    print("Version 1.0.4")
+    '''
+    Entraîne un modèle par zone du cerveau.
+    Entraîne seulement pour les deux plus grosses car performe mal sur le plus petites
+    '''
     for label in range(2):
         print("Training zone %s segmentation" %(label))
         unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None, label_idx = label)

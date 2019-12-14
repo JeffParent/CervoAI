@@ -113,6 +113,11 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     return train_index, test_index, Fail  
 
 if __name__ == '__main__':
+    '''
+    Calcule le score pour la méthode simple. 
+    Enregistre les données dans saves pour qu'elles soient
+    utilisées plus tard par le SVM
+    '''
     train_index, test_index, Fail_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.05)
 
     X = []
