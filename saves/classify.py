@@ -3,13 +3,12 @@ from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 
-#X0 = np.load("Axial_zone_1_scores_X.npy")
-#X1 = np.load("Axial_zone_0_scores_X.npy")
-X = np.load("Axial_simple_scores_X.npy")
-#X1 = np.load("Axial_simple_scores_X.npy")
-#X2 = np.load("zone_1_scores_X.npy")
-#X3 = np.load("zone_0_scores_X.npy")
-#X = np.concatenate((X0,X1),axis = 1)
+X0 = np.load("Axial_zone_1_scores_X.npy")
+X1 = np.load("Axial_zone_0_scores_X.npy")
+X4 = np.load("Axial_simple_scores_X.npy")
+X2 = np.load("zone_1_scores_X.npy")
+X3 = np.load("zone_0_scores_X.npy")
+X = np.concatenate((X0,X1,X2,X3,X4),axis = 1)
 y = np.load("zone_0_scores_y.npy")
 
 print(X.shape)
