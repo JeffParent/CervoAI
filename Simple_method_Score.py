@@ -13,11 +13,10 @@ import cv2
 class CervoDataset(Dataset):
     def __init__(self, root_dir, index, transform=None):
         """
-        Args:
-            csv_file (string): Path to the csv file with annotations.
-            root_dir (string): Directory with all the images.
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
+        Dataset pour les données
+        In
+            root_dir: dossier qui contient les données
+            index: Nom des cerveaux
         """
         self.index = index
         self.root_dir = root_dir
@@ -28,6 +27,14 @@ class CervoDataset(Dataset):
 
 
     def extract_image(self, img_folder_path, idx):
+        '''
+        Extrait l'image demandée
+        In
+            img_folder_path: dossier du cerveau
+            idx: indexe de l'image à extraire du cerveau
+        Out
+            Image 256x256x3
+        '''
         file = os.listdir(img_folder_path)[idx]
         filename = os.fsdecode(file)
         if filename[-3:] == "png":
@@ -36,12 +43,20 @@ class CervoDataset(Dataset):
             return image
         
     def __getitem__(self, idx):
+        '''
+        Extrait l'image du cerveau demandé
+        In
+            Idx: indexe entre 0 et __len__
+        Out
+            X: Image grise 265x256x1
+            y: Image du label 265x256x1
+        '''
         rest = idx%20
         
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
+        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "t1", "") 
         y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
@@ -56,6 +71,13 @@ class CervoDataset(Dataset):
 
 
 def compute_Score(X,y):
+    '''
+    Calcule la propostion de l'aire labelée par le logiel et l'aire totale
+    In
+       X: Image grise
+       y: Image labelée
+    Out: Score
+    '''
     X[np.where(X > 0)] = 1
     y[np.where(y > 0)] = 1
     good_pred = len(np.where((X + y) == 2)[0])
@@ -66,10 +88,18 @@ def compute_Score(X,y):
     return good_pred/total
 
 def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
+    '''
+    Sépare les données en train et test. 
+    In:
+        datalen: nombre de cerveaux à traîter
+        traintestRatio: ration entre train et test
+        csv_file: path vers le csv
+    Out:
+        Array qui contient les noms des cerveaux pour train et test des Pass ainsi que pour les Fails
+    '''
     labels = pd.read_csv(csv_file).values
     Pass = labels[np.where(labels[:,1] == 0)]
     Fail = labels[np.where(labels[:,1] == 1)]
-
     dataLen -= len(Fail)
     linspace = np.arange(dataLen)
     np.random.seed(seed=42)
@@ -83,9 +113,7 @@ def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI
     return train_index, test_index, Fail  
 
 if __name__ == '__main__':
-    print("Version 1.1")
-
-    train_index, test_index, Fail_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
+    train_index, test_index, Fail_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.05)
 
     X = []
     y = []
@@ -112,8 +140,6 @@ if __name__ == '__main__':
 
     X = np.array(X)
     y = np.array(y)
-    np.save("saves/Coranal_simple_scores_X", X)
+    np.save("saves/Coronal_simple_scores_X", X)
     np.save("saves/Coronal_simple_scores_y", y)
-    #trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
-    #torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
