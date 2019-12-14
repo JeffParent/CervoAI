@@ -97,8 +97,17 @@ class u_net():
         return image, prediction, label 
 
     def score(self, prediction, label):
+        #score = 0
+        #for i in range(3):
+        #    pred = prediction[:,:,i]
+        #    lab = label[:,:,i]
+        #    picture1_norm = pred/np.sqrt(np.sum(pred**2))
+        #    picture2_norm = lab/np.sqrt(np.sum(lab**2))
+        #    score += np.sum(picture2_norm*picture1_norm)
+
+
         prediction[np.where(prediction <= 1)] = 0
-        total_pixels = (len(np.where(prediction > 0)[0]) + len(np.where(label > 0)[0]))/2
+        total_pixels = max(len(np.where(prediction > 0)[0]) + len(np.where(label > 0)[0]))
         if total_pixels > 0:
             error = np.sum(np.abs(prediction-label))
             error = error/(total_pixels*3)
