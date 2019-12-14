@@ -140,6 +140,6 @@ if __name__ == '__main__':
 
     X = np.array(X)
     y = np.array(y)
-    np.save("saves/Coronal_simple_scores_X", X)
-    np.save("saves/Coronal_simple_scores_y", y)
+    np.save("saves/Coronal_simple_scores_X_total", X)
+    np.save("saves/Coronal_simple_scores_y_total", y)
 
