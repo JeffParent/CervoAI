@@ -107,7 +107,7 @@ class u_net():
 
 
         prediction[np.where(prediction <= 1)] = 0
-        total_pixels = max(len(np.where(prediction > 0)[0]) + len(np.where(label > 0)[0]))
+        total_pixels = max(len(np.where(prediction > 0)[0]), len(np.where(label > 0)[0]))
         if total_pixels > 0:
             error = np.sum(np.abs(prediction-label))
             error = error/(total_pixels*3)
