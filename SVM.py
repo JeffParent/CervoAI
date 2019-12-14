@@ -103,10 +103,10 @@ if __name__ == '__main__':
     '''
     X0 = np.load("saves/Axial_zone_1_scores_X.npy")
     X1 = np.load("saves/Axial_zone_0_scores_X.npy")
-    X2 = np.load("saves/zone_1_scores_X.npy")
-    X3 = np.load("saves/zone_0_scores_X.npy")
+    X2 = np.load("saves/Coronal_zone_1_scores_X.npy")
+    X3 = np.load("saves/Coronal_zone_0_scores_X.npy")
     X4 = np.load("saves/Axial_simple_scores_X.npy")
-    X5 = np.load("saves/Coranal_simple_scores_X.npy")
+    X5 = np.load("saves/Coronal_simple_scores_X.npy")
 
 
     X = np.concatenate((X0,X1,X2,X3),axis = 1)
