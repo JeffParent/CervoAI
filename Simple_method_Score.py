@@ -41,8 +41,8 @@ class CervoDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
-        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Axial", "labels", "")
+        X_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "t1", "") #self.index[int(idx/20), 0] à la place de "12648-10464"
+        y_folder_path = os.path.join(self.root_dir, self.index[int(idx/20), 0], "Coronal", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
@@ -112,8 +112,8 @@ if __name__ == '__main__':
 
     X = np.array(X)
     y = np.array(y)
-    np.save("saves/Axial_simple_scores_X", X)
-    np.save("saves/Axial_simple_scores_y", y)
+    np.save("saves/Coranal_simple_scores_X", X)
+    np.save("saves/Coronal_simple_scores_y", y)
     #trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
     #torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
