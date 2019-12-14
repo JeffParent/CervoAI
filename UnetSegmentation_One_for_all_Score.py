@@ -97,23 +97,23 @@ class u_net():
         return image, prediction, label 
 
     def score(self, prediction, label):
-        #score = 0
-        #for i in range(3):
-        #    pred = prediction[:,:,i]
-        #    lab = label[:,:,i]
-        #    picture1_norm = pred/np.sqrt(np.sum(pred**2))
-        #    picture2_norm = lab/np.sqrt(np.sum(lab**2))
-        #    score += np.sum(picture2_norm*picture1_norm)
+        score = 0
+        for i in range(3):
+            pred = prediction[:,:,i]
+            lab = label[:,:,i]
+            picture1_norm = pred/np.sqrt(np.sum(pred**2))
+            picture2_norm = lab/np.sqrt(np.sum(lab**2))
+            score += np.sum(picture2_norm*picture1_norm)/3
+        return score
 
-
-        prediction[np.where(prediction <= 1)] = 0
-        total_pixels = max(len(np.where(prediction > 0)[0]), len(np.where(label > 0)[0]))
-        if total_pixels > 0:
-            error = np.sum(np.abs(prediction-label))
-            error = error/(total_pixels*3)
-            score = 1-error
-            return score
-        else: return 0
+        #prediction[np.where(prediction <= 1)] = 0
+        #total_pixels = max(len(np.where(prediction > 0)[0]), len(np.where(label > 0)[0]))
+        #if total_pixels > 0:
+        #    error = np.sum(np.abs(prediction-label))
+        #    error = error/(total_pixels*3)
+        #    score = 1-error
+        #    return score
+        #else: return 0
 
      
 def trainTestSplit(dataLen = 7000, trainTestRatio = 0.8, csv_file = 'data/raw/AI_FS_QC_img/data_AI_QC.csv'):
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         y.append(1)
     X = np.array(X)
     y = np.array(y)
-    np.save("saves/One_for_all_X", X)
+    np.save("saves/One_for_all_X_2", X)
     #trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
     #torch.save(trained.state_dict(), "models/model_zone_%s" %(label))
 
