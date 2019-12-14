@@ -11,7 +11,7 @@ import cv2
 
 
 class CervoDataset(Dataset):
-    def __init__(self, root_dir, index, label_idx, transform=None):
+    def __init__(self, root_dir, index, transform=None):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -19,7 +19,6 @@ class CervoDataset(Dataset):
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
-        self.label_idx = label_idx
         self.index = index
         self.root_dir = root_dir
         self.transform = transform
@@ -132,7 +131,7 @@ if __name__ == '__main__':
     trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=3, init_features=32, pretrained=False)
     trained.load_state_dict(torch.load("models/model0"))
     trained.cuda()
-    unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = trained, label_idx = label)
+    unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = trained)
 
     train_index, test_index, Fail_index = trainTestSplit(dataLen = 7100, trainTestRatio = 0.9)
 
