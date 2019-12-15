@@ -57,8 +57,8 @@ class CervoDataset(Dataset):
         
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        X_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "t1", "") #self.labels.iloc[int(idx/20), 0] à la place de "12648-10464"
-        y_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Coronal", "labels", "")
+        X_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Axial", "t1", "") #self.labels.iloc[int(idx/20), 0] à la place de "12648-10464"
+        y_folder_path = os.path.join(self.root_dir, self.labels.iloc[idx, 0], "Axial", "labels", "")
         
         X = self.extract_image(X_folder_path, rest)
         X = X[:,:,:3]
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     '''
     unet = u_net(csv_path = 'data/raw/AI_FS_QC_img/data_AI_QC.csv', data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = None)
 
-    train_index, test_index = trainTestSplit(dataLen = 7180, trainTestRatio = 0.95)
+    train_index, test_index = trainTestSplit(dataLen = 7180, trainTestRatio = 0.9)
     
-    trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
-    torch.save(trained.state_dict(), "models/model0")
+    trained = unet.train(nb_epoch = 4, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
+    torch.save(trained.state_dict(), "models/Axial_model1")
