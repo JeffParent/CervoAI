@@ -138,8 +138,8 @@ class u_net():
         lab = imagehash.average_hash(label, hash_size=256)
         score = abs(lab-pred)
         if score > 33000:
-            prediction.save("pred", "JPEG")
-            label.save("label", "JPEG")
+            prediction.save("saves/pred", "JPEG")
+            label.save("saves/label", "JPEG")
             print(1/0)
 
         '''
