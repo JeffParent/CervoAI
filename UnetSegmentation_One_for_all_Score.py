@@ -8,6 +8,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torchvision import transforms
 import cv2
+import imagehash
+from PIL import Image
+
 
 
 class CervoDataset(Dataset):
@@ -134,6 +137,9 @@ class u_net():
             picture1_norm = pred/np.sqrt(np.sum(pred**2))
             picture2_norm = lab/np.sqrt(np.sum(lab**2))
             score += np.sum(picture2_norm*picture1_norm)/3
+        if score > 0.1:
+            print(np.max(label), np.max(prediction))
+            print(1/0)
         return score
 
      
