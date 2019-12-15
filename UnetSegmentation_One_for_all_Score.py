@@ -130,6 +130,15 @@ class u_net():
            y: Image labelée
         Out: Score
         '''
+        prediction = (prediction*255).astype(np.uint8)
+        label = (label*255).astype(np.uint8)
+        prediction= Image.fromarray(prediction)
+        label= Image.fromarray(label)
+        prediction = imagehash.average_hash(prediction, hash_size=256)
+        label = imagehash.average_hash(label, hash_size=256)
+        score = abs(label-prediction)
+
+        '''
         score = 0
         for i in range(3):
             pred = prediction[:,:,i]
@@ -140,6 +149,7 @@ class u_net():
         if score > 0.1:
             print(np.max(label), np.max(prediction))
             print(1/0)
+        '''
         return score
 
      
