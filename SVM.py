@@ -58,13 +58,15 @@ class SVM_classifier():
         a1 = np.reshape(zeros_list, (len(zeros_list),1))
         a2 = np.reshape(ones_list, (len(ones_list),1))
         a = np.concatenate((a1,a2),axis = 1)
-        pyplot.plot(np.linspace(0,1,40),a[:,0], label = "Rappel fail")
-        pyplot.plot(np.linspace(0,1,40),a[:,1], label = "Rappel pass")
-        pyplot.plot(np.linspace(0,1,40),np.sum(a,axis = 1)/2, label = "Rappel total")
+        pyplot.plot(np.linspace(0,1,40),a[:,0], label = "Fail")
+        pyplot.plot(np.linspace(0,1,40),a[:,1], label = "Pass")
+        #pyplot.plot(np.linspace(0,1,40),np.sum(a,axis = 1)/2, label = "Rappel total")
         pyplot.ylabel('Rappel')
         pyplot.xlabel('Threshold de classification')
         pyplot.title("Rappel en fonction du threshold")
         pyplot.legend()
+        pyplot.ylim(0)
+        
         pyplot.show()
 
     def fit(self,X_train, y_train):
@@ -103,13 +105,18 @@ if __name__ == '__main__':
     '''
     X0 = np.load("saves/Axial_zone_1_scores_X.npy")
     X1 = np.load("saves/Axial_zone_0_scores_X.npy")
-    X2 = np.load("saves/Coronal_zone_1_scores_X.npy")
-    X3 = np.load("saves/Coronal_zone_0_scores_X.npy")
+    X2 = np.load("saves/zone_1_scores_X.npy")
+    X3 = np.load("saves/zone_0_scores_X.npy")
     X4 = np.load("saves/Axial_simple_scores_X.npy")
-    X5 = np.load("saves/Coronal_simple_scores_X.npy")
+    X5 = np.load("saves/Coranal_simple_scores_X.npy")
+    X6 = np.load("saves/One_for_all_X.npy")
+    #print(np.max(X), np.min(X))
+    X6 -= np.min(X6)
+    X = X6/(np.max(X6)-np.min(X6))
 
 
-    X = np.concatenate((X0,X1,X2,X3),axis = 1)
+    #X = np.concatenate((X0,X1,X2,X3,X6),axis = 1)
+    
     y = np.load("saves/zone_0_scores_y.npy")
 
     plot_proportion_distribution(X, y)

@@ -165,5 +165,5 @@ if __name__ == '__main__':
 
     train_index, test_index = trainTestSplit(dataLen = 7180, trainTestRatio = 0.95)
     
-    trained = unet.train(nb_epoch = 10, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
+    trained = unet.train(nb_epoch = 3, learning_rate = 0.01, momentum = 0.99, batch_size = 32, train_index = train_index)
     torch.save(trained.state_dict(), "models/model0")
