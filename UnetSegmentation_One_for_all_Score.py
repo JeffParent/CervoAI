@@ -193,7 +193,7 @@ if __name__ == '__main__':
     utilisées plus tard par le SVM
     '''
     trained = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet', in_channels=3, out_channels=3, init_features=32, pretrained=False)
-    trained.load_state_dict(torch.load("models/model0"))
+    trained.load_state_dict(torch.load("models/model1"))
     trained.cuda()
     unet = u_net(data_path = 'data/raw/AI_FS_QC_img/', device = "cuda", trained_model = trained)
 
