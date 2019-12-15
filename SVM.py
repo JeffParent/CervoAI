@@ -58,8 +58,8 @@ class SVM_classifier():
         a1 = np.reshape(zeros_list, (len(zeros_list),1))
         a2 = np.reshape(ones_list, (len(ones_list),1))
         a = np.concatenate((a1,a2),axis = 1)
-        pyplot.plot(np.linspace(0,1,40),a[:,0], label = "Fail")
-        pyplot.plot(np.linspace(0,1,40),a[:,1], label = "Pass")
+        pyplot.plot(np.linspace(0,1,40),a[:,0], label = "Fail", c = "r")
+        pyplot.plot(np.linspace(0,1,40),a[:,1], label = "Pass", c = "b")
         #pyplot.plot(np.linspace(0,1,40),np.sum(a,axis = 1)/2, label = "Rappel total")
         pyplot.ylabel('Rappel')
         pyplot.xlabel('Threshold de classification')
@@ -109,13 +109,18 @@ if __name__ == '__main__':
     X3 = np.load("saves/zone_0_scores_X.npy")
     X4 = np.load("saves/Axial_simple_scores_X.npy")
     X5 = np.load("saves/Coranal_simple_scores_X.npy")
+   
     X6 = np.load("saves/One_for_all_X.npy")
-    #print(np.max(X), np.min(X))
     X6 -= np.min(X6)
-    X = X6/(np.max(X6)-np.min(X6))
+    X6 = X6/(np.max(X6)-np.min(X6))
+
+    X7 = np.load("saves/Axial_One_for_all_X.npy")
+    X7 -= np.min(X7)
+    X7 = X7/(np.max(X7)-np.min(X7))
 
 
-    #X = np.concatenate((X0,X1,X2,X3,X6),axis = 1)
+    X = np.concatenate((X0,X1,X2,X3,X6),axis = 1)
+    #X = np.concatenate((X6,X7),axis = 1)
     
     y = np.load("saves/zone_0_scores_y.npy")
 
