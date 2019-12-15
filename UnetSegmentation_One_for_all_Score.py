@@ -134,9 +134,13 @@ class u_net():
         label = (label*255).astype(np.uint8)
         prediction= Image.fromarray(prediction)
         label= Image.fromarray(label)
-        prediction = imagehash.average_hash(prediction, hash_size=256)
-        label = imagehash.average_hash(label, hash_size=256)
-        score = abs(label-prediction)
+        pred = imagehash.average_hash(prediction, hash_size=256)
+        lab = imagehash.average_hash(label, hash_size=256)
+        score = abs(lab-pred)
+        if score > 33000:
+            prediction.save("pred", "JPEG")
+            label.save("label", "JPEG")
+            print(1/0)
 
         '''
         score = 0
